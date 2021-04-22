@@ -24,9 +24,9 @@ public abstract class  SuperEatable {
                 position.y = MathUtils.random(Gdx.graphics.getHeight()
                         / SNAKE_MOVEMENT - 1) * SNAKE_MOVEMENT;
                 isAvailable = false;
-            } while (position.x == snake1.getPosition().x && position.y == snake1.getPosition().y
+            } while (position.x == snake1.getSnakeX() && position.y == snake1.getSnakeY()
                     ||
-                    position.x == snake2.getPosition().x && position.y == snake2.getPosition().y
+                    position.x == snake2.getSnakeX() && position.y == snake2.getSnakeY()
             );
         }
     }
@@ -40,7 +40,7 @@ public abstract class  SuperEatable {
                 position.y = MathUtils.random(Gdx.graphics.getHeight()
                         / SNAKE_MOVEMENT - 1) * SNAKE_MOVEMENT;
                 isAvailable = true;
-            } while (position.x == snake1.getPosition().x && position.y == snake1.getPosition().y);
+            } while (position.x == snake1.getSnakeX() && position.y == snake1.getSnakeY());
         }
     };
 

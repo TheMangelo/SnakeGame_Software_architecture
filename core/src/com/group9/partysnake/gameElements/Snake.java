@@ -8,8 +8,8 @@ import com.badlogic.gdx.utils.Array;
 
 public class Snake {
 
-    private Vector2 position;
     private int snakeX = 0, snakeY = 0;
+    private boolean hasHit = false;
 
     private Vector2 formerPosition = new Vector2(0,0);
 
@@ -23,7 +23,12 @@ public class Snake {
     private static final int UP = 2;
     private static final int DOWN = 3;
 
+    //Initial movement
+
     private int snakeDirection = RIGHT;
+
+    //For stoppping doublebacks
+    private boolean directionSet = false;
 
     public class BodyPart {
 
@@ -84,9 +89,6 @@ public class Snake {
 
 
 
-    public Vector2 getPosition() {
-        return position;
-    }
 
     private void checkForOutBounds(){
         if (snakeX >= Gdx.graphics.getWidth()){
@@ -103,9 +105,46 @@ public class Snake {
         }
     }
 
+    private void checkSnakeBodyCollision() {
+        for (BodyPart bodyPart : bodyParts) {
+            if (bodyPart.x == snakeX && bodyPart.y == snakeY) hasHit = true;
+        }
+    }
+
 
     public void setSnakeDirection(int direction){
-        snakeDirection = direction;
+        //snakeDirection = direction;
+        updateDirection(direction);
+    }
+
+    private void updateIfNotOppositeDirection(int newSnakeDirection, int
+            oppositeDirection) {
+        if (snakeDirection != oppositeDirection || bodyParts.size == 0) snakeDirection =
+                newSnakeDirection;
+    }
+
+    private void updateDirection(int newSnakeDirection) {
+        if (!directionSet && snakeDirection != newSnakeDirection) {
+            directionSet = true;
+            switch (newSnakeDirection) {
+                case LEFT: {
+                    updateIfNotOppositeDirection(newSnakeDirection, RIGHT);
+                }
+                break;
+                case RIGHT: {
+                    updateIfNotOppositeDirection(newSnakeDirection, LEFT);
+                }
+                break;
+                case UP: {
+                    updateIfNotOppositeDirection(newSnakeDirection, DOWN);
+                }
+                break;
+                case DOWN: {
+                    updateIfNotOppositeDirection(newSnakeDirection, UP);
+                }
+                break;
+            }
+        }
     }
 
 
@@ -132,8 +171,6 @@ public class Snake {
             }
         }
 
-
-
     }
 
     public void updateBodyPartsPosition() {
@@ -158,16 +195,28 @@ public class Snake {
     }
 
     public void updateSnake(){
-        moveSnake();
-        checkForOutBounds();
-        updateBodyPartsPosition();
+        if (!hasHit){
+            moveSnake();
+            checkForOutBounds();
+            updateBodyPartsPosition();
+            checkSnakeBodyCollision();
+            directionSet = false;
+        }
+
+
 
     }
 
+    public int getSnakeX() {
+        return snakeX;
+    }
+
+    public int getSnakeY() {
+        return snakeY;
+    }
 
     public Snake(){
         System.out.print("it's alive!!");
-        this.position = new Vector2(0,0);
         this.snakeX = 0;
         this.snakeY = 0;
     }
