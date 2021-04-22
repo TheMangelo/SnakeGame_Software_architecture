@@ -45,12 +45,12 @@ public class Snake {
         }
 
         public void draw(Batch batch) {
-            if (!(x == (int) position.x && y == (int) position.y)) batch.draw(texture, x, y);
+            if (!(x == (int)snakeX && y == (int)snakeY)) batch.draw(texture, x, y);
         }
 
 
         public void draw1(Batch batch) {
-            if (!(bodyPosition.x == position.x && bodyPosition.y == position.y)) {
+            if (!(bodyPosition.x ==snakeX && bodyPosition.y ==snakeY)) {
                 batch.draw(texture, bodyPosition.x, bodyPosition.y);
             }
         }
@@ -59,7 +59,7 @@ public class Snake {
 
     public void increaseLength(){
         BodyPart bodyPart = new BodyPart();
-        bodyPart.updateBodyPosition((int) position.x,(int) position.y);
+        bodyPart.updateBodyPosition((int)snakeX,(int)snakeY);
         bodyParts.insert(0,bodyPart);
 //        System.out.println("increaseLength");
 //        System.out.println(bodyParts.size);
@@ -69,7 +69,9 @@ public class Snake {
 
 
     public void checkSnakeEat(SuperEatable eatable){
-        if (eatable.isAvailable && position.equals(eatable.position)) {
+        if (eatable.isAvailable &&
+                eatable.position.x == snakeX && eatable.position.y == snakeY)
+        {
             increaseLength();
 //            System.out.println("You just got eaten");
 //            System.out.println(position);
@@ -87,17 +89,17 @@ public class Snake {
     }
 
     private void checkForOutBounds(){
-        if (position.x >= Gdx.graphics.getWidth()){
-            position.x = 0;
+        if (snakeX >= Gdx.graphics.getWidth()){
+           snakeX = 0;
         }
-        if (position.x < 0){
-            position.x = Gdx.graphics.getWidth() - SNAKE_MOVEMENT;
+        if (snakeX < 0){
+           snakeX = Gdx.graphics.getWidth() - SNAKE_MOVEMENT;
         }
-        if (position.y >= Gdx.graphics.getHeight()){
-            position.y = 0;
+        if (snakeY >= Gdx.graphics.getHeight()){
+           snakeY= 0;
         }
-        if (position.y < 0){
-            position.y = Gdx.graphics.getHeight() - SNAKE_MOVEMENT;
+        if (snakeY < 0){
+           snakeY= Gdx.graphics.getHeight() - SNAKE_MOVEMENT;
         }
     }
 
@@ -108,24 +110,24 @@ public class Snake {
 
 
     public void moveSnake(){
-        formerPosition.x = position.x;
-        formerPosition.y = position.y;
+        formerPosition.x =snakeX;
+        formerPosition.y =snakeY;
 
         switch(snakeDirection){
             case RIGHT: {
-                position.x += SNAKE_MOVEMENT;
+               snakeX += SNAKE_MOVEMENT;
                 return;
             }
             case LEFT: {
-                position.x -= SNAKE_MOVEMENT;
+               snakeX -= SNAKE_MOVEMENT;
                 return;
             }
             case UP: {
-                position.y += SNAKE_MOVEMENT;
+               snakeY+= SNAKE_MOVEMENT;
                 return;
             }
             case DOWN: {
-                position.y -= SNAKE_MOVEMENT;
+               snakeY-= SNAKE_MOVEMENT;
                 return;
             }
         }
@@ -148,7 +150,7 @@ public class Snake {
     }
 
     public void draw(Batch batch){
-        batch.draw(snakeHead, position.x, position.y);
+        batch.draw(snakeHead,snakeX,snakeY);
         for (BodyPart bodyPart : bodyParts) {
             bodyPart.draw(batch);
         }
