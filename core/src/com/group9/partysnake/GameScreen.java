@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.group9.partysnake.gameElements.Snake;
 
 import java.awt.Color;
 
@@ -227,6 +228,7 @@ public class GameScreen extends ScreenAdapter {
         snakeHead = new Texture("snakehead.png");
         apple = new Texture("apple.png");
         snakeBody = new Texture("snakebody.png");
+
     }
 
 
