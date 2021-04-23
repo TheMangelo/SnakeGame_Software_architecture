@@ -4,13 +4,17 @@ package com.group9.partysnake.gamestate;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.group9.partysnake.gameElements.Apple;
 import com.group9.partysnake.gameElements.Snake;
 
@@ -25,8 +29,6 @@ public class SinglePlayerState extends ScreenAdapter {
     private SpriteBatch batch;
     private ShapeRenderer shapeRenderer;
 
-    private boolean directionSet = false;
-    private boolean hasHit = false;
 
     private static final int RIGHT = 0;
     private static final int LEFT = 1;
@@ -40,10 +42,19 @@ public class SinglePlayerState extends ScreenAdapter {
     private static final int GRID_CELL = 32;
 
 
+    //Viewport methods
+    private Viewport viewport;
+    private Camera camera;
+    private static final float WORLD_WIDTH = 640;
+    private static final float WORLD_HEIGHT = 480;
 
 
     private void drawGrid() {
+
+        shapeRenderer.setProjectionMatrix(camera.projection);
+        shapeRenderer.setTransformMatrix(camera.view);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+
         for (int x = 0; x < Gdx.graphics.getWidth(); x+= GRID_CELL){
             for (int y = 0; y < Gdx.graphics.getHeight(); y+= GRID_CELL){
                 shapeRenderer.rect(x,y, GRID_CELL, GRID_CELL);
@@ -60,10 +71,16 @@ public class SinglePlayerState extends ScreenAdapter {
 
     @Override
     public void show () {
+        camera = new OrthographicCamera(Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight());
+        camera.position.set(WORLD_WIDTH / 2, WORLD_HEIGHT / 2, 0);
+        camera.update();
+        viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
-        snakeInstance = new Snake();
-        apple = new Apple();
+        snakeInstance = new Snake(viewport);
+        apple = new Apple(viewport);
     }
 
     private void queryInput() {
@@ -94,10 +111,18 @@ public class SinglePlayerState extends ScreenAdapter {
 
     }
 
+
+
     public void draw(){
+
+        batch.setProjectionMatrix(camera.projection);
+        batch.setTransformMatrix(camera.view);
+
         batch.begin();
         snakeInstance.draw(batch);
         snakeInstance.checkSnakeEat(apple);
+
+
         apple.checkAndPlace(snakeInstance);
         apple.draw(batch);
         batch.end();

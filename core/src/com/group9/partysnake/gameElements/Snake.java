@@ -1,10 +1,12 @@
 package com.group9.partysnake.gameElements;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class Snake {
 
@@ -26,6 +28,9 @@ public class Snake {
     //Initial movement
 
     private int snakeDirection = RIGHT;
+
+    private Viewport viewport;
+    private Camera camera;
 
     //For stoppping doublebacks
     private boolean directionSet = false;
@@ -90,20 +95,22 @@ public class Snake {
 
 
 
+
     private void checkForOutBounds(){
-        if (snakeX >= Gdx.graphics.getWidth()){
+        if (snakeX >= (int) viewport.getWorldWidth()){
            snakeX = 0;
         }
         if (snakeX < 0){
-           snakeX = Gdx.graphics.getWidth() - SNAKE_MOVEMENT;
+           snakeX = (int) viewport.getWorldWidth() - SNAKE_MOVEMENT;
         }
-        if (snakeY >= Gdx.graphics.getHeight()){
+        if (snakeY >= (int) viewport.getWorldHeight()){
            snakeY= 0;
         }
         if (snakeY < 0){
-           snakeY= Gdx.graphics.getHeight() - SNAKE_MOVEMENT;
+           snakeY= (int) viewport.getWorldHeight() - SNAKE_MOVEMENT;
         }
     }
+
 
     private void checkSnakeBodyCollision() {
         for (BodyPart bodyPart : bodyParts) {
@@ -215,9 +222,19 @@ public class Snake {
         return snakeY;
     }
 
-    public Snake(){
+    public void setSnakeX(int snakeX) {
+        this.snakeX = snakeX;
+    }
+
+    public void setSnakeY(int snakeY) {
+        this.snakeY = snakeY;
+    }
+
+    public Snake(Viewport viewport){
         System.out.print("it's alive!!");
         this.snakeX = 0;
         this.snakeY = 0;
+        this.viewport = viewport;
+
     }
 }

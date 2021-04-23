@@ -5,12 +5,15 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public abstract class  SuperEatable {
     Texture texture;
     boolean isAvailable = false;
     Vector2 position = new Vector2(0,0);
     int SNAKE_MOVEMENT = 32;
+
+    private Viewport viewport;
 
 
 
@@ -35,9 +38,9 @@ public abstract class  SuperEatable {
     public void checkAndPlace(Snake snake1) {
         if (!isAvailable) {
             do {
-                position.x = MathUtils.random(Gdx.graphics.getWidth()
+                position.x = MathUtils.random((int) viewport.getWorldWidth()
                         / SNAKE_MOVEMENT - 1) * SNAKE_MOVEMENT;
-                position.y = MathUtils.random(Gdx.graphics.getHeight()
+                position.y = MathUtils.random((int) viewport.getWorldHeight()
                         / SNAKE_MOVEMENT - 1) * SNAKE_MOVEMENT;
                 isAvailable = true;
             } while (position.x == snake1.getSnakeX() && position.y == snake1.getSnakeY());
@@ -48,6 +51,10 @@ public abstract class  SuperEatable {
         if (isAvailable) {
             batch.draw(texture, position.x, position.y);
         }
+    }
+
+    public SuperEatable(Viewport viewport){
+        this.viewport = viewport;
     }
 
 
