@@ -7,10 +7,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 public class LoginState extends GameState {
     private GameStateManager gsm;
@@ -43,15 +47,42 @@ public class LoginState extends GameState {
         this.loginButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-
+                connect(false);
+            }
+        });
+        this.newUserButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                connect(true);
             }
         });
     }
 
-    private void connect() {
-        String URI = String.format("http://%s:%d/", this.HOSTNAME, this.PORT);
-        IO.Options options = new IO.Options();
-        this.socket = new IO.socket(URI, options);
+    private void connect(boolean newUser) {
+        URI uri = URI.create( String.format("http://%s:%d/", this.HOSTNAME, this.PORT) );
+
+        Map<String, String> auth = new HashMap<String, String>();
+        auth.put("name", this.usernameField.getText());
+        auth.put("password", this.passwordField.getText());
+        auth.put("new", Boolean.toString(newUser));
+
+        IO.Options options = IO.Options.builder().setAuth(auth).build();
+
+        this.socket = new IO.socket(uri, options);
+        this.socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                System.out.println(String.format("Could not connect.\nError: %s\nReason: %s",
+                                                 args.message,
+                                                 args.data));
+            }
+        });
+        this.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                System.out.println("Connected!");
+            }
+        });
         this.socket.connect();
     }
 
