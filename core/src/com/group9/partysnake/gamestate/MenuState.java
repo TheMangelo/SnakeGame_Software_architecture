@@ -50,6 +50,7 @@ public class MenuState extends State {
 
     private int height = PartySnake.HEIGHT;
     private int width = PartySnake.WIDTH;
+
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
 
@@ -63,8 +64,11 @@ public class MenuState extends State {
         single = new Texture("single.png");
         score = new Texture("score.png");
 
+        Texture snakeHead = new Texture("snakehead.png");
 
-        sTitle = new Sprite(title);
+
+
+        sTitle = new Sprite(snakeHead);
         sTitle.setPosition(10, 10);
 
         shapeRenderer = new ShapeRenderer();
@@ -105,10 +109,7 @@ public class MenuState extends State {
         draw(sb);
         //drawGrid();
 
-       /* sb.begin();
-        sTitle.setColor(0, 0, 1, 1);
-        sTitle.draw(sb);
-        sb.end();*/
+
 
 
 

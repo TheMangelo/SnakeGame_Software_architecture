@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.group9.partysnake.PartySnake;
 
 import java.awt.Color;
 
@@ -18,7 +19,7 @@ public abstract class State extends ScreenAdapter {
     protected State(GameStateManager gsm){
         this.gsm = gsm;
         cam = new OrthographicCamera();
-        cam.setToOrtho(false, 240, 400);
+        cam.setToOrtho(false, PartySnake.WIDTH, PartySnake.HEIGHT);
     }
 
     public abstract void handleInput();
