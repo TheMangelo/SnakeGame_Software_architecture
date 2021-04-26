@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group9.partysnake.gamestate.GameStateManager;
 import com.group9.partysnake.gamestate.MenuState;
+import com.group9.partysnake.gamestate.MultiPlayerState;
+import com.group9.partysnake.gamestate.SinglePlayer;
 import com.group9.partysnake.gamestate.SinglePlayerState;
 
 public class PartySnake extends Game {
@@ -23,7 +25,8 @@ public class PartySnake extends Game {
 	public void create () {
 		spriteBatch = new SpriteBatch();
 		gameStateManager = new GameStateManager();
-		gameStateManager.push(new MenuState(gameStateManager));
+
+		gameStateManager.push(new SinglePlayer(gameStateManager));
 
 	}
 

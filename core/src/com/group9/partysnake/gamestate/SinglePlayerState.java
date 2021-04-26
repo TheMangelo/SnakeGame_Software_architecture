@@ -97,7 +97,7 @@ public class SinglePlayerState extends ScreenAdapter {
     public void draw(){
         batch.begin();
         snakeInstance.draw(batch);
-        snakeInstance.checkSnakeEat(apple);
+        //snakeInstance.checkSnakeEat(apple);
         apple.checkAndPlace(snakeInstance);
         apple.draw(batch);
         batch.end();

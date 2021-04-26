@@ -3,6 +3,7 @@ package com.group9.partysnake.gameElements;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -11,10 +12,15 @@ public class Snake {
     private int snakeX = 0, snakeY = 0;
     private boolean hasHit = false;
 
+
     private Vector2 formerPosition = new Vector2(0,0);
 
     private int SNAKE_MOVEMENT = 32;
     private Texture snakeHead = new Texture("snakehead.png");
+    private Texture super_snakeBody = new Texture("snakebody.png");
+    private Rectangle rectangle = new Rectangle(0,0, snakeHead.getWidth(),snakeHead.getHeight());
+
+
     private Array<BodyPart> bodyParts = new Array<BodyPart>();
 
     // For handling the direction changes
@@ -35,9 +41,11 @@ public class Snake {
         private Vector2 bodyPosition;
         private int x, y;
 
-        private Texture texture = new Texture("snakebody.png");
+        private Texture texture;
 
         public BodyPart() {
+            this.texture = super_snakeBody;
+
         }
 
         public void updateBodyPosition(int x, int y) {
@@ -73,6 +81,7 @@ public class Snake {
     }
 
 
+/*
     public void checkSnakeEat(SuperEatable eatable){
         if (eatable.isAvailable &&
                 eatable.position.x == snakeX && eatable.position.y == snakeY)
@@ -86,6 +95,17 @@ public class Snake {
             eatable.isAvailable = false;
         }
     }
+*/
+
+
+    public void checkSnakeEat(Apple_rectangle apple){
+        if (apple.isAvailable && rectangle.overlaps(apple.rectangle))
+        {
+            increaseLength();
+            apple.isAvailable = false;
+        }
+    }
+
 
 
 
@@ -147,10 +167,15 @@ public class Snake {
         }
     }
 
+    private void updateRectanglePosition(){
+        rectangle.setX(snakeX);
+        rectangle.setY(snakeY);
+    }
 
     public void moveSnake(){
         formerPosition.x =snakeX;
         formerPosition.y =snakeY;
+        updateRectanglePosition();
 
         switch(snakeDirection){
             case RIGHT: {
@@ -219,5 +244,17 @@ public class Snake {
         System.out.print("it's alive!!");
         this.snakeX = 0;
         this.snakeY = 0;
+        rectangle.set(0,0,snakeHead.getWidth(),snakeHead.getHeight());
     }
+
+    public Snake(Texture snakeHead, Texture snakeBody, int positionX, int positionY){
+        this.snakeHead = snakeHead;
+        this.super_snakeBody = snakeBody;
+        this.snakeX = positionX;
+        this.snakeY = positionY;
+        rectangle.set(positionX,positionY,snakeHead.getWidth(),snakeHead.getHeight());
+
+
+    }
+
 }
