@@ -31,13 +31,14 @@ public class SettingsState extends State {
         stage = new Stage();
         table = new Table();
 
-        Gdx.input.setInputProcessor(stage);
-        stage.addActor(table);
-
         makeButtons();
         fetchSkinsAndBackgrounds();
         setUpTable();
         setUpClickHandling();
+
+        Gdx.input.setInputProcessor(stage);
+        stage.addActor(table);
+        stage.addActor(backButton);
     }
 
     private void makeButtons() {
@@ -51,7 +52,15 @@ public class SettingsState extends State {
         skinButtonRight = new Button(rightDrawable);
         backgroundButtonLeft = new Button(leftDrawable);
         backgroundButtonRight = new Button(rightDrawable);
-        backButton = new Button();  // Brukes ikke enda
+
+        TextureRegion backArrow = new TextureRegion(new Texture("return_arrow.png"));
+        TextureRegionDrawable backDrawable = new TextureRegionDrawable(backArrow);
+
+        backButton = new Button(backDrawable);
+
+        backButton.setTransform(true);
+        backButton.setScale(0.5f);
+        backButton.setPosition(20, 310);
     }
 
     private void fetchSkinsAndBackgrounds() {
@@ -107,6 +116,12 @@ public class SettingsState extends State {
                 backgroundIndex = backgroundIndex == backgrounds.size - 1 ? 0 : backgroundIndex + 1;
                 currentBackground.setDrawable(backgrounds.get(backgroundIndex).getDrawable());
                 System.out.println(backgroundIndex);
+            }
+        });
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gsm.push(new MenuState(gsm));
             }
         });
     }
