@@ -18,7 +18,8 @@ public class SettingsState extends State {
     private Table table;
 
     private Button skinButtonLeft, skinButtonRight,
-                   backgroundButtonLeft, backgroundButtonRight;
+                   backgroundButtonLeft, backgroundButtonRight,
+                   backButton;
 
     private Array<Image> skins, backgrounds;
     private Image currentSkin, currentBackground;
@@ -50,6 +51,7 @@ public class SettingsState extends State {
         skinButtonRight = new Button(rightDrawable);
         backgroundButtonLeft = new Button(leftDrawable);
         backgroundButtonRight = new Button(rightDrawable);
+        backButton = new Button();  // Brukes ikke enda
     }
 
     private void fetchSkinsAndBackgrounds() {
@@ -116,13 +118,13 @@ public class SettingsState extends State {
         table.add(currentSkin);
         table.add(skinButtonRight).width(50).height(50);
         table.row();
-        table.add().colspan(3).height(10);
+        table.add().colspan(3).height(20);
         table.row();
         table.add(backgroundButtonLeft).width(50).height(50);
         table.add(currentBackground).width(100).height(100);
         table.add(backgroundButtonRight).width(50).height(50);
         table.setFillParent(true);
-        table.pad(15);
+        table.pad(10);
     }
 
     @Override
