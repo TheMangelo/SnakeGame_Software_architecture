@@ -146,7 +146,7 @@ public class SettingsState extends State {
 
     @Override
     public void handleInput() {
-
+        // Handled by stage
     }
 
     @Override
