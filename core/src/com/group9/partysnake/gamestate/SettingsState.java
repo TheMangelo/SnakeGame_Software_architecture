@@ -139,6 +139,7 @@ public class SettingsState extends State {
         table.add(backgroundButtonLeft).width(50).height(50);
         table.add(currentBackground).width(100).height(100);
         table.add(backgroundButtonRight).width(50).height(50);
+
         table.setFillParent(true);
         table.pad(10);
     }
