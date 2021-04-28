@@ -30,6 +30,7 @@ import io.socket.emitter.Emitter;
 public class LoginState extends State {
     private final static String HOSTNAME = "127.0.0.1";
     private final static int PORT = 3000;
+    private final static Skin SKIN = new Skin(Gdx.files.internal("uiskin.json"));
 
     private Stage stage;
     private Table table;
@@ -43,14 +44,10 @@ public class LoginState extends State {
     LoginState(GameStateManager gsm) {
         super(gsm);
 
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-
-        dialog = new Dialog("Could not connect", skin, "dialog");
-        dialog.button("OK");
-
-        setUpTextFields(skin);
-        setUpButtons(skin);
+        setUpTextFields();
+        setUpButtons();
         setUpTable();
+        setUpDialog("");
 
         stage = new Stage();
 
@@ -59,14 +56,14 @@ public class LoginState extends State {
         stage.addActor(backButton);
     }
 
-    private void setUpTextFields(Skin skin) {
-        usernameField = new TextField("Username", skin);
-        passwordField = new TextField("Password", skin);
+    private void setUpTextFields() {
+        usernameField = new TextField("Username", SKIN);
+        passwordField = new TextField("Password", SKIN);
     }
 
-    private void setUpButtons(Skin skin) {
-        loginButton = new TextButton("Log in", skin);
-        newUserButton = new TextButton("Create user", skin);
+    private void setUpButtons() {
+        loginButton = new TextButton("Log in", SKIN);
+        newUserButton = new TextButton("Create user", SKIN);
 
         loginButton.addListener(new ChangeListener() {
             @Override
@@ -114,6 +111,12 @@ public class LoginState extends State {
         table.pad(10);
     }
 
+    private void setUpDialog(String text) {
+        dialog = new Dialog("Could not connect", SKIN, "dialog");
+        if (text.length() > 0) dialog.text(text);
+        dialog.button("OK");
+    }
+
     @Override
     public void handleInput() {
         // Handled by stage
@@ -134,7 +137,7 @@ public class LoginState extends State {
             @Override
             public void call(Object... args) {
                 if (args[0] instanceof Exception) {
-                    dialog.text(args[0].toString() + '\n' + ((Exception) args[0]).getCause());
+                    setUpDialog(args[0].toString() + '\n' + ((Exception) args[0]).getCause());
                     dialog.show(stage);
                     gsm.socket.disconnect();
                     return;
@@ -146,11 +149,11 @@ public class LoginState extends State {
                     message = jsonObject.getString("message");
                     data = jsonObject.getString("data");
                 } catch (JSONException e) {
-                    dialog.text("Unexpected response from server:\n" +
-                                jsonObject.toString());
+                    setUpDialog("Unexpected response from server:\n" + jsonObject.toString());
+                    dialog.show(stage);
                     return;
                 }
-                dialog.text(message + '\n' + data);
+                setUpDialog(message + '\n' + data);
                 dialog.show(stage);
             }
         });
