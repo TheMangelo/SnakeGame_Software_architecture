@@ -29,7 +29,6 @@ public class SettingsState extends State {
         super(gsm);
 
         stage = new Stage();
-        table = new Table();
 
         makeButtons();
         fetchSkinsAndBackgrounds();
@@ -127,6 +126,8 @@ public class SettingsState extends State {
     }
 
     private void setUpTable() {
+        table = new Table();
+
         table.add(new Image(new Texture("settings.png"))).colspan(3);
         table.row();
         table.add(skinButtonLeft).width(50).height(50);
