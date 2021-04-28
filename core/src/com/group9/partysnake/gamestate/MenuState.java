@@ -1,6 +1,7 @@
 package com.group9.partysnake.gamestate;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -54,6 +55,7 @@ public class MenuState extends State {
     private OrthographicCamera camera;
     private ShapeRenderer shapeRenderer;
 
+    boolean isPressed = false;
 
 
     public MenuState(GameStateManager gsm) {
@@ -68,8 +70,18 @@ public class MenuState extends State {
 
 
 
-        sTitle = new Sprite(snakeHead);
-        sTitle.setPosition(10, 10);
+        sSetting = new Sprite(setting);
+        sSetting.setPosition(0, GRID_CELL);
+
+        sOnline = new Sprite(online);
+        sOnline.setPosition(width-online.getWidth(), height-GRID_CELL*6);
+
+        sSingle = new Sprite(single);
+        sSingle.setPosition(0, height-GRID_CELL*6);
+
+        sScore = new Sprite(score);
+        sScore.setPosition(width-score.getWidth(), GRID_CELL);
+
 
         shapeRenderer = new ShapeRenderer();
         camera = new OrthographicCamera(PartySnake.HEIGHT, PartySnake.WIDTH);
@@ -79,10 +91,33 @@ public class MenuState extends State {
 
 
 
+
     @Override
     public void handleInput() {
-        if(Gdx.input.justTouched()){
-            System.out.println("You just touched the screen");
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)){
+                sSetting.setColor(1,1,0,1);
+            } else{
+                sSetting.setColor(1,1,1,1);
+
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)){
+            sSingle.setColor(1,1,0,1);
+        } else{
+            sSingle.setColor(1,1,1,1);
+
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.UP)){
+            sOnline.setColor(1,1,0,1);
+        } else{
+            sOnline.setColor(1,1,1,1);
+
+        }
+        if(Gdx.input.isKeyPressed(Input.Keys.DOWN)){
+            sScore.setColor(1,1,0,1);
+        } else{
+            sScore.setColor(1,1,1,1);
+
         }
     }
 
@@ -129,11 +164,18 @@ public class MenuState extends State {
         sb.draw(title, (width-title.getWidth())/2, height-title.getHeight());
 
         //Buttons
-        sb.draw(single, 0, height-GRID_CELL*8);
-        sb.draw(online, width-online.getWidth(), height-GRID_CELL*8);
-        sb.draw(setting, 0, GRID_CELL*2);
-        sb.draw(score, width-score.getWidth(), GRID_CELL*2);
+        //sb.draw(single, 0, height-GRID_CELL*6);
+        sSingle.draw(sb);
 
+        sSetting.draw(sb);
+
+        sOnline.draw(sb);
+        //sb.draw(online, width-online.getWidth(), height-GRID_CELL*6);
+
+        //sb.draw(setting, 0, GRID_CELL);
+        //sb.draw(score, width-score.getWidth(), GRID_CELL);
+
+        sScore.draw(sb);
 
 
         sb.end();

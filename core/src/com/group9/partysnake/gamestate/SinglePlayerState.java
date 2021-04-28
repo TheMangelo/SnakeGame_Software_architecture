@@ -33,14 +33,10 @@ public class SinglePlayerState extends ScreenAdapter {
     private static final int UP = 2;
     private static final int DOWN = 3;
 
-
     private static final float MOVE_TIME = 0.1F;  //Hvor fort slangen skal bevege seg og oppdatere movesa
     private float timer = MOVE_TIME;     // Definerer en timer
     private static final int SNAKE_MOVEMENT = 32; // Antall pixler som slangen skal bevege seg
     private static final int GRID_CELL = 32;
-
-
-
 
     private void drawGrid() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
@@ -87,11 +83,9 @@ public class SinglePlayerState extends ScreenAdapter {
             timer = MOVE_TIME;
 
         }
-
         clearScreen(); //<----- Denne må være før hahah hvis ikke så clearer den før den tegner hver gang
         drawGrid();
         draw();
-
     }
 
     public void draw(){
@@ -102,5 +96,4 @@ public class SinglePlayerState extends ScreenAdapter {
         apple.draw(batch);
         batch.end();
     }
-
 }

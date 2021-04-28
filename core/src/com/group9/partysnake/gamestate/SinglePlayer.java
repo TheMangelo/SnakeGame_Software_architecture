@@ -75,10 +75,11 @@ public class SinglePlayer extends State{
     public SinglePlayer(GameStateManager gsm){
         super(gsm);
 
-        background = new Texture("grass_back.png");
+        //background = new Texture("grass_back.png");
 
         shapeRenderer = new ShapeRenderer();
-        snake1 = new Snake(new Texture("snakehead_purp.png"), new Texture("snakebody_purp.png"),10,10);
+        //snake1 = new Snake(new Texture("snakehead_purp.png"), new Texture("snakebody_purp.png"),10,10);
+        snake1 = new Snake();
 
         apple = new Apple_rectangle();
 
@@ -111,7 +112,7 @@ public class SinglePlayer extends State{
         clearScreen(); //<----- Denne må være før hahah hvis ikke så clearer den før den tegner hver gang
         sb.begin();
 
-        sb.draw(background,0,0, PartySnake.WIDTH,PartySnake.HEIGHT);
+        //sb.draw(background,0,0, PartySnake.WIDTH,PartySnake.HEIGHT);
         sb.end();
         draw(sb);
     }
