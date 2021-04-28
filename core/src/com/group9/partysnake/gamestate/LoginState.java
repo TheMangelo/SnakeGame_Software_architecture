@@ -164,16 +164,16 @@ public class LoginState extends State {
     }
 
     public void update(float dt) {
-        this.stage.act(dt);
+        stage.act(dt);
     }
 
     @Override
     public void render(SpriteBatch sb) {
-        this.stage.draw();
+        stage.draw();
     }
 
     @Override
     public void dispose() {
-        this.stage.dispose();
+        stage.dispose();
     }
 }
