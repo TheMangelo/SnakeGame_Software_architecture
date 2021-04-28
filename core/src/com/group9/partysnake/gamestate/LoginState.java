@@ -1,12 +1,23 @@
 package com.group9.partysnake.gamestate;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -17,31 +28,46 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class LoginState extends State {
-    private GameStateManager gsm;
+    private final static String HOSTNAME = "127.0.0.1";
+    private final static int PORT = 3000;
 
     private Stage stage;
+    private Table table;
+
     private TextField usernameField, passwordField;
     private TextButton loginButton, newUserButton;
+    private Button backButton;
 
-    private String HOSTNAME = "127.0.0.1";
-    private int PORT = 3000;
+    private Dialog dialog;
 
     LoginState(GameStateManager gsm) {
         super(gsm);
 
+        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+
+        dialog = new Dialog("Could not connect", skin, "dialog");
+        dialog.button("OK");
+
+        setUpTextFields(skin);
+        setUpButtons(skin);
+        setUpTable();
+
         stage = new Stage();
-        TextField.TextFieldStyle textFieldStyle = new TextField.TextFieldStyle();
-        usernameField = new TextField("Username", textFieldStyle);
-        passwordField = new TextField("Password", textFieldStyle);
-        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
-        loginButton = new TextButton("Log in", buttonStyle);
-        newUserButton = new TextButton("Create user", buttonStyle);
 
         Gdx.input.setInputProcessor(stage);
-        stage.addActor(usernameField);
-        stage.addActor(passwordField);
-        stage.addActor(loginButton);
-        stage.addActor(newUserButton);
+        stage.addActor(table);
+        stage.addActor(backButton);
+    }
+
+    private void setUpTextFields(Skin skin) {
+        usernameField = new TextField("Username", skin);
+        passwordField = new TextField("Password", skin);
+    }
+
+    private void setUpButtons(Skin skin) {
+        loginButton = new TextButton("Log in", skin);
+        newUserButton = new TextButton("Create user", skin);
+
         loginButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
@@ -54,55 +80,99 @@ public class LoginState extends State {
                 connect(true);
             }
         });
+
+        TextureRegion backArrow = new TextureRegion(new Texture("return_arrow.png"));
+        TextureRegionDrawable backDrawable = new TextureRegionDrawable(backArrow);
+
+        backButton = new Button(backDrawable);
+
+        backButton.setTransform(true);
+        backButton.setScale(0.5f);
+        backButton.setPosition(20, 310);
+
+        backButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                gsm.push(new MenuState(gsm));
+            }
+        });
+    }
+
+    private void setUpTable() {
+        table = new Table();
+
+        table.add(new Image(new Texture("online.png"))).colspan(2);
+        table.row();
+        table.add(usernameField).colspan(2).padBottom(10);
+        table.row();
+        table.add(passwordField).colspan(2).padBottom(10);
+        table.row();
+        table.add(loginButton);
+        table.add(newUserButton);
+
+        table.setFillParent(true);
+        table.pad(10);
     }
 
     @Override
     public void handleInput() {
-
+        // Handled by stage
     }
 
     private void connect(boolean newUser) {
-        URI uri = URI.create( String.format("http://%s:%d/", this.HOSTNAME, this.PORT) );
+        URI uri = URI.create( String.format("http://%s:%d/", HOSTNAME, PORT) );
 
         Map<String, String> auth = new HashMap<>();
-        auth.put("name", this.usernameField.getText());
-        auth.put("password", this.passwordField.getText());
+        auth.put("name", usernameField.getText());
+        auth.put("password", passwordField.getText());
         auth.put("new", Boolean.toString(newUser));
 
         IO.Options options = IO.Options.builder().setAuth(auth).build();
 
-        gsm.socket = new IO.socket(uri, options);
+        gsm.socket = IO.socket(uri, options);
         gsm.socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                System.out.println(String.format("Could not connect.\nError: %s\nReason: %s",
-                                                 args.message,
-                                                 args.data));
+                if (args[0] instanceof Exception) {
+                    dialog.text(args[0].toString() + '\n' + ((Exception) args[0]).getCause());
+                    dialog.show(stage);
+                    gsm.socket.disconnect();
+                    return;
+                }
+                JSONObject jsonObject = (JSONObject) args[0];
+                String message;
+                String data;
+                try {
+                    message = jsonObject.getString("message");
+                    data = jsonObject.getString("data");
+                } catch (JSONException e) {
+                    dialog.text("Unexpected response from server:\n" +
+                                jsonObject.toString());
+                    return;
+                }
+                dialog.text(message + '\n' + data);
+                dialog.show(stage);
             }
         });
-        this.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+        gsm.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 System.out.println("Connected!");
             }
         });
-        this.socket.connect();
+        gsm.socket.connect();
     }
 
     public void update(float dt) {
-
+        this.stage.act(dt);
     }
 
     @Override
     public void render(SpriteBatch sb) {
-
-    }
-
-    public void render(float dt) {
         this.stage.draw();
-        this.stage.act();
     }
 
+    @Override
     public void dispose() {
         this.stage.dispose();
     }
