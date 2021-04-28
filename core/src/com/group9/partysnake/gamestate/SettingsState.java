@@ -149,7 +149,7 @@ public class SettingsState extends State {
 
     @Override
     public void update(float dt) {
-        stage.act();
+        stage.act(dt);
     }
 
     @Override
