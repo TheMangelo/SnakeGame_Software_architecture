@@ -13,7 +13,7 @@ public class PartySnake extends Game {
 	public static final int WIDTH = 640;
 	public static final int HEIGHT = 360 ;
 
-	public static final String TITLE = "SNAKE with friends";
+	public static final String TITLE = "Party Snake";
 
 	private GameStateManager gameStateManager;
 	private SpriteBatch spriteBatch;
