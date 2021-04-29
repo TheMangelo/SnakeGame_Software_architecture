@@ -70,7 +70,10 @@ public class SinglePlayerState  {
         boolean rPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean uPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
         boolean dPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        if (lPressed) snakeInstance.setSnakeDirection(LEFT);
+        if (lPressed) {
+            snakeInstance.setSnakeDirection(LEFT);
+            System.out.println("HIEIHEIHE");
+        }
         if (rPressed) snakeInstance.setSnakeDirection(RIGHT);
         if (uPressed) snakeInstance.setSnakeDirection(UP);
         if (dPressed) snakeInstance.setSnakeDirection(DOWN);
