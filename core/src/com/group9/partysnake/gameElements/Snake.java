@@ -32,7 +32,6 @@ public class Snake {
 
     public class BodyPart {
 
-        private Vector2 bodyPosition;
         private int x, y;
 
         private Texture texture = new Texture("snakebody.png");
@@ -45,20 +44,12 @@ public class Snake {
             this.y = y;
         }
 
-        public void updateBodyPosition1(Vector2 pos) {
-            this.bodyPosition = pos;
-        }
 
         public void draw(Batch batch) {
             if (!(x == (int)snakeX && y == (int)snakeY)) batch.draw(texture, x, y);
         }
 
 
-        public void draw1(Batch batch) {
-            if (!(bodyPosition.x ==snakeX && bodyPosition.y ==snakeY)) {
-                batch.draw(texture, bodyPosition.x, bodyPosition.y);
-            }
-        }
 
     }
 
