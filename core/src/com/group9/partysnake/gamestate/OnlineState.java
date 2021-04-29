@@ -38,7 +38,6 @@ public class OnlineState extends State {
         super(gsm);
         mySnake = new Snake();
         onlineSnake = new Snake();
-        connectSocket();
 
     }
 
@@ -47,21 +46,8 @@ public class OnlineState extends State {
         this.socket = socket;
         mySnake = new Snake();
         onlineSnake = new Snake();
-        connectSocket();
     }
 
-    public void setSocket(Socket socket) {
-        this.socket = socket;
-    }
-
-    public void connectSocket(){
-        try {
-            socket = IO.socket("Den relevante socketadressen");
-            socket.connect();
-        } catch(Exception e){
-            System.out.println(e);
-        }
-    }
 
 
     private void queryInput() {
@@ -78,10 +64,9 @@ public class OnlineState extends State {
         if (dPressed) mySnake.setSnakeDirection(DOWN);
     }
 
-    //Denne må håndtere swipe
-    @Override
-    public void handleInput() {
 
+    public void configSocketEvent(){
+        gsm.socket.
     }
 
     public void updateServer(float dt){
@@ -101,6 +86,13 @@ public class OnlineState extends State {
 
     }
 
+
+
+    //Denne må håndtere swipe
+    @Override
+    public void handleInput() {
+
+    }
 
     //Sender info til server basert på hvilken tid jeg har
     @Override
