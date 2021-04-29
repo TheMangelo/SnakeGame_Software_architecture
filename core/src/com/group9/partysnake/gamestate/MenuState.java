@@ -86,9 +86,14 @@ public class MenuState extends State {
 
             int x = Gdx.input.getX();
             int y = PartySnake.HEIGHT - Gdx.input.getY();
-            if ((0 < x && x < setting.getWidth()) &&
-                    (GRID_CELL*2 < y && y < GRID_CELL*2 + setting.getHeight())) {
+
+            if ( (0 < x && x < setting.getWidth()) &&
+                    (GRID_CELL*2 < y && y < GRID_CELL*2 + setting.getHeight()) ) {
                 gsm.push(new SettingsState(gsm));
+            }
+            else if ( (width - online.getWidth() < x && x < width) &&
+                        (height - GRID_CELL*8 < y && y < height-GRID_CELL*8 + online.getHeight())) {
+                gsm.push(new LoginState(gsm));
             }
         }
     }

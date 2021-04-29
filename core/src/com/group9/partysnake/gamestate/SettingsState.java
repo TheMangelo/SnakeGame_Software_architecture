@@ -29,7 +29,6 @@ public class SettingsState extends State {
         super(gsm);
 
         stage = new Stage();
-        table = new Table();
 
         makeButtons();
         fetchSkinsAndBackgrounds();
@@ -127,6 +126,8 @@ public class SettingsState extends State {
     }
 
     private void setUpTable() {
+        table = new Table();
+
         table.add(new Image(new Texture("settings.png"))).colspan(3);
         table.row();
         table.add(skinButtonLeft).width(50).height(50);
@@ -138,18 +139,19 @@ public class SettingsState extends State {
         table.add(backgroundButtonLeft).width(50).height(50);
         table.add(currentBackground).width(100).height(100);
         table.add(backgroundButtonRight).width(50).height(50);
+
         table.setFillParent(true);
         table.pad(10);
     }
 
     @Override
     public void handleInput() {
-
+        // Handled by stage
     }
 
     @Override
     public void update(float dt) {
-        stage.act();
+        stage.act(dt);
     }
 
     @Override

@@ -5,11 +5,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
 
+import io.socket.client.Socket;
+
 public class GameStateManager {
     private Stack<State> states;
 
+    // "Global variable"
+    public Socket socket;
+
     public GameStateManager() {
-        states = new Stack<State>();
+        states = new Stack<>();
     }
 
     public void push(State state) {
