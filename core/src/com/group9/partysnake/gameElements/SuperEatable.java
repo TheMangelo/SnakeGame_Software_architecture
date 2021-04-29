@@ -14,6 +14,7 @@ public abstract class  SuperEatable {
 
 
 
+
     //Denne funksjonen sjekker at den ikke plasseres oppå en av slangene
 
     public void checkAndPlace(Snake snake1, Snake snake2) {
