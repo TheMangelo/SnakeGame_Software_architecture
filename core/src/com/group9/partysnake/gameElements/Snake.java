@@ -98,9 +98,12 @@ public class Snake {
         this.snakeX = positionX;
         this.snakeY = positionY;
         rectangle.set(positionX,positionY,snakeHead.getWidth(),snakeHead.getHeight());
-
-
     }
+
+    public void updateAllPosition( List<List<Integer>> sentPosition){
+        this.allPositions = sentPosition;
+    }
+
 
     public void increaseLength(){
         BodyPart bodyPart = new BodyPart();

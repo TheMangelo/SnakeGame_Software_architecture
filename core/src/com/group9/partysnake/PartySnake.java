@@ -8,6 +8,9 @@ import com.group9.partysnake.gamestate.GameStateManager;
 import com.group9.partysnake.gamestate.MenuState;
 import com.group9.partysnake.gamestate.OnlineState;
 import com.group9.partysnake.gamestate.SinglePlayerState;
+import com.group9.partysnake.gamestate.getJsonExternalState;
+
+import org.json.JSONException;
 
 public class PartySnake extends Game {
 
@@ -26,7 +29,13 @@ public class PartySnake extends Game {
 		gameStateManager = new GameStateManager();
 		//gameStateManager.push(new MenuState(gameStateManager));
 
-		gameStateManager.push(new OnlineState(gameStateManager));
+		//gameStateManager.push(new OnlineState(gameStateManager));
+
+		try {
+			gameStateManager.push(new getJsonExternalState(gameStateManager));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 	}
 

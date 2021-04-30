@@ -4,14 +4,18 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group9.partysnake.gameElements.Snake;
+import com.group9.partysnake.gameElements.TestJson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //Disse blir relevante når
 
@@ -30,8 +34,10 @@ public class OnlineState extends State {
     private static final int UP = 2;
     private static final int DOWN = 3;
 
-    private Socket socket;
     private Snake mySnake, onlineSnake;
+
+    private String room;
+
 
 
     public OnlineState(GameStateManager gsm) {
@@ -39,13 +45,6 @@ public class OnlineState extends State {
         mySnake = new Snake();
         onlineSnake = new Snake();
 
-    }
-
-    public OnlineState(GameStateManager gsm, Socket socket) {
-        super(gsm);
-        this.socket = socket;
-        mySnake = new Snake();
-        onlineSnake = new Snake();
     }
 
 
@@ -65,20 +64,48 @@ public class OnlineState extends State {
     }
 
 
+    //Function that configures socket events
+    // Tick is everytime the game is updated from the server
     public void configSocketEvent(){
-        gsm.socket.
+
+        gsm.socket.on("gameUpdate", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                //Must extract the relevant position data to draw opponent Snake
+                JSONObject sent_data = (JSONObject) args[0];
+                JSONObject board;
+                JSONArray vsPosition;
+                try {
+                    room = sent_data.getString("room");
+                    board = (JSONObject) sent_data.get("board");
+                    vsPosition = board.getJSONArray("p2");
+
+
+
+                }catch(JSONException e){
+                    Gdx.app.log("SocketIO", "Error updating game with gameUpdate");
+                }
+            }
+        });
+
     }
 
+    
+    // Function that sends the relevant data as JSON.
+    //Update
     public void updateServer(float dt){
         timer += dt;
         if (timer >= UPDATE_TIME && mySnake != null && game_over != true){
             JSONObject data = new JSONObject();
+            JSONObject positionJson = new JSONObject();
 
             try{
-                data.put("x",1);
-                data.put("x",2);
+                data.put("room", "INSERT ROOM ID HERE");
+                positionJson.put("p1",mySnake.getAllPositions());
+                data.put("board",positionJson);
+                data.put("time", 1000); //Vet ijkke hva jeg skal bruke her
+                gsm.socket.emit("tick", data);
 
-                socket.emit("updatePlayer", data);
             } catch (JSONException e){
                 Gdx.app.log("SOCKET.IO", "Error sending JSON");
             }
@@ -114,14 +141,15 @@ public class OnlineState extends State {
             onlineSnake.draw(sb);
         }
         sb.end();
-
     }
 
     @Override
     public void dispose() {
         super.dispose();
-
+        mySnake.dispose();
+        if (onlineSnake != null){
+            onlineSnake.dispose();
+        }
     }
-
 
 }
