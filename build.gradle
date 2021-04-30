@@ -97,7 +97,13 @@ project(":core") {
         api "com.badlogicgames.ashley:ashley:$ashleyVersion"
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
+<<<<<<< HEAD
         implementation ('io.socket:socket.io-client:2.0.1')
+=======
+
+        api "io.socket:socket.io-client:0.6.2"
+
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
 
     }
 }

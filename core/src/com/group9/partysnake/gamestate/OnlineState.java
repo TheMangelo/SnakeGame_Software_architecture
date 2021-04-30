@@ -4,10 +4,15 @@ import io.socket.client.IO;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group9.partysnake.gameElements.Snake;
+<<<<<<< HEAD
 import com.group9.partysnake.gameElements.TestJson;
 
 import org.json.JSONArray;
@@ -17,6 +22,12 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+=======
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
 //Disse blir relevante når
 
 
@@ -34,6 +45,7 @@ public class OnlineState extends State {
     private static final int UP = 2;
     private static final int DOWN = 3;
 
+<<<<<<< HEAD
     private Snake mySnake, onlineSnake;
 
     private String room;
@@ -47,6 +59,40 @@ public class OnlineState extends State {
 
     }
 
+=======
+    private Socket socket;
+    private Snake mySnake, onlineSnake;
+
+
+    public OnlineState(GameStateManager gsm) {
+        super(gsm);
+        mySnake = new Snake();
+        onlineSnake = new Snake();
+        connectSocket();
+
+    }
+
+    public OnlineState(GameStateManager gsm, Socket socket) {
+        super(gsm);
+        this.socket = socket;
+        mySnake = new Snake();
+        onlineSnake = new Snake();
+        connectSocket();
+    }
+
+    public void setSocket(Socket socket) {
+        this.socket = socket;
+    }
+
+    public void connectSocket(){
+        try {
+            socket = IO.socket("Den relevante socketadressen");
+            socket.connect();
+        } catch(Exception e){
+            System.out.println(e);
+        }
+    }
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
 
 
     private void queryInput() {
@@ -63,6 +109,7 @@ public class OnlineState extends State {
         if (dPressed) mySnake.setSnakeDirection(DOWN);
     }
 
+<<<<<<< HEAD
 
     //Function that configures socket events
     // Tick is everytime the game is updated from the server
@@ -93,10 +140,19 @@ public class OnlineState extends State {
     
     // Function that sends the relevant data as JSON.
     //Update
+=======
+    //Denne må håndtere swipe
+    @Override
+    public void handleInput() {
+
+    }
+
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
     public void updateServer(float dt){
         timer += dt;
         if (timer >= UPDATE_TIME && mySnake != null && game_over != true){
             JSONObject data = new JSONObject();
+<<<<<<< HEAD
             JSONObject positionJson = new JSONObject();
 
             try{
@@ -106,6 +162,14 @@ public class OnlineState extends State {
                 data.put("time", 1000); //Vet ijkke hva jeg skal bruke her
                 gsm.socket.emit("tick", data);
 
+=======
+
+            try{
+                data.put("x",1);
+                data.put("x",2);
+
+                socket.emit("updatePlayer", data);
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
             } catch (JSONException e){
                 Gdx.app.log("SOCKET.IO", "Error sending JSON");
             }
@@ -114,6 +178,7 @@ public class OnlineState extends State {
     }
 
 
+<<<<<<< HEAD
 
     //Denne må håndtere swipe
     @Override
@@ -121,6 +186,8 @@ public class OnlineState extends State {
 
     }
 
+=======
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
     //Sender info til server basert på hvilken tid jeg har
     @Override
     public void update(float dt) {
@@ -141,15 +208,26 @@ public class OnlineState extends State {
             onlineSnake.draw(sb);
         }
         sb.end();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
     }
 
     @Override
     public void dispose() {
         super.dispose();
+<<<<<<< HEAD
         mySnake.dispose();
         if (onlineSnake != null){
             onlineSnake.dispose();
         }
     }
 
+=======
+
+    }
+
+
+>>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
 }
