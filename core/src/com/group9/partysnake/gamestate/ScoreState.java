@@ -1,5 +1,6 @@
 package com.group9.partysnake.gamestate;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,11 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.group9.partysnake.PartySnake;
 
 public class ScoreState extends State{
     private Stage stage;
     private Button backButton;
-    private int score;
+    private Texture background;
+    private int score[];
+    private int names[];
 
 
     public ScoreState(GameStateManager gsm) {
@@ -23,7 +27,12 @@ public class ScoreState extends State{
 
         makeButton();
 
+        clickHandling();
+
+        Gdx.input.setInputProcessor(stage);
         stage.addActor(backButton);
+
+        background = new Texture("background.png");
     }
 
     private void makeButton() {
@@ -47,6 +56,8 @@ public class ScoreState extends State{
     }
 
 
+
+
     @Override
     public void handleInput() {
 
@@ -59,6 +70,9 @@ public class ScoreState extends State{
 
     @Override
     public void render(SpriteBatch sb) {
+        sb.begin();
+        sb.draw(background, 0, 0);
+        sb.end();
         stage.draw();
     }
 
