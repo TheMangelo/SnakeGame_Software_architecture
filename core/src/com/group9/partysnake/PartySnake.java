@@ -29,7 +29,7 @@ public class PartySnake extends Game {
 		gameStateManager = new GameStateManager();
 		//gameStateManager.push(new MenuState(gameStateManager));
 
-<<<<<<< HEAD
+
 		//gameStateManager.push(new OnlineState(gameStateManager));
 
 		try {
@@ -37,9 +37,7 @@ public class PartySnake extends Game {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-=======
-		gameStateManager.push(new OnlineState(gameStateManager));
->>>>>>> 50b1647339a361fe615ea519c0fed69dded62c30
+
 
 	}
 
