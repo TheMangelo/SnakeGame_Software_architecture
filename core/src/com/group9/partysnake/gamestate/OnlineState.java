@@ -12,8 +12,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Function;
 
 
 //Disse blir relevante når
@@ -25,6 +28,7 @@ public class OnlineState extends State {
     private final float UPDATE_TIME = 1/30f;
     private float timer;
     private boolean game_over = false;
+    private boolean joining;
 
     // For handling the direction changes
     private static final int RIGHT = 0;
@@ -35,14 +39,54 @@ public class OnlineState extends State {
     private Snake mySnake;
     private OnlineSnake onlineSnake;
 
-    private String room;
+    private String opponentName;
 
     private static final float MOVE_TIME = 0.1F;  //Hvor fort slangen skal bevege seg og oppdatere movesa
 
-    public OnlineState(GameStateManager gsm) {
+    public OnlineState(GameStateManager gsm, boolean joining) {
         super(gsm);
+        this.joining = joining;
         mySnake = new Snake();
         onlineSnake = new OnlineSnake();
+
+        if (joining) {
+            tryToJoin();
+        } else {
+            searchForOpponent();
+        }
+    }
+
+    private void tryToJoin() {
+        gsm.socket.once("gameRequest", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                // Not sure if this is the way it works, but the documentation is fairly shit
+                // regarding the specifics here.
+                opponentName = (String) args[0];
+                // This apparently doesn't work. Need to find out how to respond. Perhaps just
+                // define a new emit?
+                // Function responseFunction = (Function) args[1];
+                // responseFunction.apply(true);
+            }
+        });
+        // Some form of timeout or ability to cancel should be implemented
+        while (joining) { ; }
+    }
+
+    private void searchForOpponent() {
+        gsm.socket.emit("newGame", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject jsonObject = (JSONObject) args[0];
+                try {
+                    opponentName = jsonObject.getString("opponent");
+                } catch (JSONException e) {
+                    opponentName = null;
+                }
+            }
+        });
+        // Some form of timeout or ability to cancel should be implemented
+        while (opponentName == "") { ; }
     }
 
     private void queryInput() {
@@ -68,8 +112,6 @@ public class OnlineState extends State {
                 JSONObject sent_data = (JSONObject) args[0];
                 JSONObject board;
                 try {
-                    room = sent_data.getString("room");
-
                    /* NB! board needs to be on the form
                     {"p1": "[[1,2], [3,2], ,,,]",
                     "p2":  "[3,6], [6,7], [2,4],,,,"}
@@ -100,10 +142,10 @@ public class OnlineState extends State {
             JSONObject positionJson = new JSONObject();
 
             try{
-                data.put("room", "INSERT ROOM ID HERE");
-                positionJson.put("p2",mySnake.getAllPositions());
-                data.put("board",positionJson);
-                data.put("time", 1000); //Vet ijkke hva jeg skal bruke her
+                String playerNumber = joining ? "p2" : "p1";
+                positionJson.put(playerNumber, mySnake.getAllPositions());
+                data.put("board", positionJson);
+                data.put("time", timer);
                 gsm.socket.emit("tick", data);
 
             } catch (JSONException e){
