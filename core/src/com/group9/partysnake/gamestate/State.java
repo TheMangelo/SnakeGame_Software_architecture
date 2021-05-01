@@ -2,13 +2,12 @@ package com.group9.partysnake.gamestate;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
 import com.group9.partysnake.PartySnake;
-
-import java.awt.Color;
 
 public abstract class State extends ScreenAdapter {
 
@@ -27,8 +26,7 @@ public abstract class State extends ScreenAdapter {
     public abstract void render(SpriteBatch sb);
 
     void clearScreen() {
-        Gdx.gl.glClearColor(Color.BLACK.getRed(), Color.BLACK.getGreen(),
-                Color.BLACK.getBlue(), Color.BLACK.getAlpha());
+        Gdx.gl.glClearColor(Color.BLACK.r, Color.BLACK.g, Color.BLACK.b, Color.BLACK.a);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 }
