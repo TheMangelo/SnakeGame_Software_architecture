@@ -86,6 +86,8 @@ public class MenuState extends State {
 
             int x = Gdx.input.getX();
             int y = PartySnake.HEIGHT - Gdx.input.getY();
+            System.out.println(x);
+            System.out.println(y);
 
             if ( (0 < x && x < setting.getWidth()) &&
                     (GRID_CELL*2 < y && y < GRID_CELL*2 + setting.getHeight()) ) {
