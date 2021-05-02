@@ -80,6 +80,7 @@ public class MenuState extends State {
         if (Gdx.input.justTouched()) {
             System.out.println("You just touched the screen");
 
+
             int x = Gdx.input.getX();
             int y = PartySnake.HEIGHT - Gdx.input.getY();
 
