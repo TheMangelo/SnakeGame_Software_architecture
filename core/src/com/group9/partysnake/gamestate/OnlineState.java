@@ -59,6 +59,7 @@ public class OnlineState extends State {
                 // User should probably be asked if they want to accept, but for now
                 // the response is always true (accept).
                 ((Ack) args[1]).call(true);
+                joining = false;
             }
         });
         // Some form of timeout or ability to cancel should be implemented
@@ -135,7 +136,7 @@ public class OnlineState extends State {
 
             try{
                 String playerNumber = joining ? "p2" : "p1";
-                positionJson.put(playerNumber, mySnake.getAllPositions());
+                positionJson.put(playerNumber, (Object) mySnake.getAllPositions());
                 data.put("board", positionJson);
                 data.put("time", timer);
                 gsm.socket.emit("tick", data);
