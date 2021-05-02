@@ -95,7 +95,7 @@ public class MenuState extends State {
             }
             else if ( (width - online.getWidth() < x && x < width) &&
                         (height - GRID_CELL*8 < y && y < height-GRID_CELL*8 + online.getHeight())) {
-                gsm.push(new LoginState(gsm));
+                gsm.push(new LoginState(gsm, true));
             }
         }
     }
