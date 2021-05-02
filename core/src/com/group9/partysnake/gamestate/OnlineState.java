@@ -1,7 +1,9 @@
 package com.group9.partysnake.gamestate;
 
 import io.socket.client.Ack;
+import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
+import jdk.internal.module.SystemModuleFinders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -12,6 +14,8 @@ import com.group9.partysnake.gameElements.Snake;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.concurrent.TimeUnit;
+
 
 //Disse blir relevante når
 
@@ -21,7 +25,8 @@ public class OnlineState extends State {
 
     private final float UPDATE_TIME = 1/30f;
     private float timer;
-    private boolean game_over = false;
+    private boolean game_over;
+    private String stopReason;
     private boolean joining;
 
     // For handling the direction changes
@@ -39,9 +44,13 @@ public class OnlineState extends State {
 
     public OnlineState(GameStateManager gsm, boolean joining) {
         super(gsm);
+
+        game_over = false;
         this.joining = joining;
         mySnake = new Snake();
         onlineSnake = new OnlineSnake();
+
+        configSocketEvent();
 
         if (joining) {
             tryToJoin();
@@ -64,23 +73,43 @@ public class OnlineState extends State {
         });
         // Some form of timeout or ability to cancel should be implemented
         while (joining) { ; }
+        joining = true;
     }
 
     private void searchForOpponent() {
-        gsm.socket.emit("newGame", new Emitter.Listener() {
+        opponentName = "";
+        gsm.socket.emit("newGame", new Ack() {
             @Override
             public void call(Object... args) {
                 JSONObject jsonObject = (JSONObject) args[0];
                 try {
                     opponentName = jsonObject.getString("opponent");
+                    System.out.println("received: " + opponentName);
                 } catch (JSONException e) {
+                    System.out.println("inside catch: " + e.toString());
                     opponentName = null;
                 }
             }
         });
         // Some form of timeout or ability to cancel should be implemented.
         // Also, not finding a partner has to be handled somehow.
-        while (opponentName == "") { ; }
+        System.out.println("pre-loop: " + opponentName);
+        while (true) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+                System.out.println("loop: " + (opponentName == null && !opponentName.equals("")));
+            } catch (Exception e) {
+                ;
+            }
+            if (opponentName == null || !opponentName.equals("")) break;
+        }
+        System.out.println("post-loop");
+        if (opponentName.equals("null")) {
+            stopReason = "No opponent found";
+            game_over = true;
+            System.out.println("in loop");
+        };
+        System.out.println("post-if");
     }
 
     private void queryInput() {
@@ -94,6 +123,22 @@ public class OnlineState extends State {
         if (dPressed) mySnake.setSnakeDirection(DOWN);
     }
 
+    private Emitter.Listener onGameOver = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            gsm.socket.off();
+            if (args.length > 0) stopReason = (String) args[0];
+            System.out.println("Game over: " + stopReason);
+            Gdx.app.postRunnable(new Runnable() {
+                @Override
+                public void run() {
+                    gsm.pop();
+                    dispose();
+                    System.out.println(gsm.getStates());
+                }
+            });
+        }
+    };
 
     //Function that configures socket events
     // Tick is everytime the game is updated from the server
@@ -103,20 +148,21 @@ public class OnlineState extends State {
             @Override
             public void call(Object... args) {
                 //Must extract the relevant position_data
-                JSONObject sent_data = (JSONObject) args[0];
-                JSONObject board;
+                JSONObject board = (JSONObject) args[0];
+                System.out.println("RAW: " + board);
                 try {
                    /* NB! board needs to be on the form
                     {"p1": "[[1,2], [3,2], ,,,]",
                     "p2":  "[3,6], [6,7], [2,4],,,,"}
                    * */
-                    board = (JSONObject) sent_data.get("board");
-                    onlineSnake.castJSON(board);
+                    onlineSnake.castJSON(board, joining ? "p1" : "p2");
                 }catch(JSONException e){
                     Gdx.app.log("SocketIO", "Error updating game with gameUpdate");
                 }
             }
         });
+        gsm.socket.once("endGame", onGameOver);
+        gsm.socket.once(Socket.EVENT_DISCONNECT, onGameOver);
     }
     // Function that sends the relevant data as JSON.
     //Update
@@ -129,15 +175,19 @@ public class OnlineState extends State {
 
 
     //This updates the server and sends data to the server
-    public void updateServer(float dt){
+    public void updateServer(float dt) {
+        System.out.println("Updating server");
         timer += dt;
-        if (timer >= UPDATE_TIME && mySnake != null && game_over != true){
+        if (timer >= UPDATE_TIME && mySnake != null && !game_over){
+            System.out.println("Update started");
             JSONObject data = new JSONObject();
             JSONObject positionJson = new JSONObject();
 
             try{
                 String playerNumber = joining ? "p2" : "p1";
-                positionJson.put(playerNumber, (Object) mySnake.getAllPositions());
+                System.out.println("Playernum: " + playerNumber);
+                positionJson.put(playerNumber, mySnake.getAllPositions());
+                System.out.println(mySnake.getAllPositions());
                 data.put("board", positionJson);
                 data.put("time", timer);
                 gsm.socket.emit("tick", data);
@@ -160,6 +210,9 @@ public class OnlineState extends State {
     //Sender info til server basert på hvilken tid jeg har
     @Override
     public void update(float dt) {
+        if (game_over) {
+            onGameOver.call();
+        }
         updateServer(dt);
         mySnake.updateSnake();
 
