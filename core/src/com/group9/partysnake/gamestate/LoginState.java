@@ -97,7 +97,9 @@ public class LoginState extends State {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gsm.push(new MenuState(gsm));
+                if (gsm.socket != null) gsm.socket.off();
+                gsm.pop();
+                dispose();
             }
         });
     }
@@ -123,11 +125,13 @@ public class LoginState extends State {
         dialog = new Dialog(title, SKIN, "dialog") {
             public void result(Object obj) {
                 if (obj == null) return;
+                gsm.socket.off();
                 if ((boolean) obj) {
-                    gsm.push(new OnlineState(gsm, false));
+                    gsm.set(new OnlineState(gsm, false));
                 } else {
-                    gsm.push(new OnlineState(gsm, true));
+                    gsm.set(new OnlineState(gsm, true));
                 }
+                dispose();
             }
         };
         dialog.text(text);
@@ -147,7 +151,8 @@ public class LoginState extends State {
                 dialog.show(stage);
             } else {
                 // TODO: Comment this back in when ScoreState has been defined!
-                // gsm.push(new ScoreState(gsm));
+                gsm.socket.off();
+                // gsm.set(new ScoreState(gsm));
             }
         }
     };
@@ -163,7 +168,7 @@ public class LoginState extends State {
         IO.Options options = IO.Options.builder().setAuth(auth).build();
 
         gsm.socket = IO.socket(uri, options);
-        gsm.socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+        gsm.socket.once(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 if (args[0] instanceof Exception) {
@@ -189,7 +194,7 @@ public class LoginState extends State {
                 dialog.show(stage);
             }
         });
-        gsm.socket.on(Socket.EVENT_CONNECT, onConnect);
+        gsm.socket.once(Socket.EVENT_CONNECT, onConnect);
         gsm.socket.connect();
     }
 
