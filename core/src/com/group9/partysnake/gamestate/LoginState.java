@@ -32,6 +32,8 @@ public class LoginState extends State {
     private final static int PORT = 3000;
     private final static Skin SKIN = new Skin(Gdx.files.internal("uiskin.json"));
 
+    private boolean aboutToPlay;
+
     private Stage stage;
     private Table table;
 
@@ -41,8 +43,10 @@ public class LoginState extends State {
 
     private Dialog dialog;
 
-    LoginState(GameStateManager gsm) {
+    public LoginState(GameStateManager gsm, boolean aboutToPlay) {
         super(gsm);
+
+        this.aboutToPlay = aboutToPlay;
 
         setUpTextFields();
         setUpButtons();
@@ -111,7 +115,7 @@ public class LoginState extends State {
     }
 
     private void setUpDialog(String text, boolean failed) {
-        String title = failed ? "Could not connect": "Connected!";
+        String title = failed ? "Could not connect" : "Connected!";
         dialog = new Dialog(title, SKIN, "dialog") {
             public void result(Object obj) {
                 if (obj == null) return;
@@ -176,8 +180,13 @@ public class LoginState extends State {
         gsm.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                setUpDialog("Create a new game, or join existing one", false);
-                dialog.show(stage);
+                if (aboutToPlay) {
+                    setUpDialog("Create a new game, or join existing one", false);
+                    dialog.show(stage);
+                } else {
+                    // TODO: Comment this back in when ScoreState has been defined!
+                    // gsm.push(new ScoreState(gsm));
+                }
             }
         });
         gsm.socket.connect();
