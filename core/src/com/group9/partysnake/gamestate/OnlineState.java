@@ -1,5 +1,6 @@
 package com.group9.partysnake.gamestate;
 
+import io.socket.client.Ack;
 import io.socket.emitter.Emitter;
 
 import com.badlogic.gdx.Gdx;
@@ -8,15 +9,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group9.partysnake.gameElements.OnlineSnake;
 import com.group9.partysnake.gameElements.Snake;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
 
 
 //Disse blir relevante når
@@ -60,13 +54,11 @@ public class OnlineState extends State {
         gsm.socket.once("gameRequest", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
-                // Not sure if this is the way it works, but the documentation is fairly shit
-                // regarding the specifics here.
                 opponentName = (String) args[0];
-                // This apparently doesn't work. Need to find out how to respond. Perhaps just
-                // define a new emit?
-                // Function responseFunction = (Function) args[1];
-                // responseFunction.apply(true);
+                // Responding with true accepts the invite.
+                // User should probably be asked if they want to accept, but for now
+                // the response is always true (accept).
+                ((Ack) args[1]).call(true);
             }
         });
         // Some form of timeout or ability to cancel should be implemented
