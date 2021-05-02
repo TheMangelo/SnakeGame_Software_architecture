@@ -19,9 +19,7 @@ public class jsonFromServer {
 
     public jsonFromServer() {
 
-    }
-
-    ;
+    };
 
 
     public void castJSON(JSONObject jsonObject) throws JSONException {

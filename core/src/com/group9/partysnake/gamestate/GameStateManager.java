@@ -16,7 +16,6 @@ public class GameStateManager {
 
     public GameStateManager() {
         states = new Stack<>();
-        connectSocket();
     }
 
     public void push(State state) {
@@ -40,13 +39,4 @@ public class GameStateManager {
         states.peek().render(sb);
     }
 
-    public void connectSocket(){
-        try{
-            socket = IO.socket("http://35.228.7.69:3000/");
-            socket.connect();
-        } catch (Exception e){
-
-            System.out.println("Something went wrong to connect");
-        }
-    }
 }

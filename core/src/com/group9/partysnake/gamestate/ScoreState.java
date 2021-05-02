@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import io.socket.client.Ack;
 import io.socket.emitter.Emitter;
 
 public class ScoreState extends State{
@@ -36,6 +37,7 @@ public class ScoreState extends State{
 
     public ScoreState(GameStateManager gsm) {
         super(gsm);
+        getScore();
 
         stage = new Stage();
         backgroundTexture = new Texture("background.png");
@@ -61,17 +63,40 @@ public class ScoreState extends State{
         stage.addActor(backButton);
     }
 
-    public void configSocketEvent(){
+/*    public void configSocketEvent(){
+
         gsm.socket.on("getTopTen", new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 JSONArray data = (JSONArray) args[0];
                 try{
                     convertJson(data);
+                    System.out.println("It got the Data");
                 } catch (Exception e){
                     System.out.println("Something went wrong reading from Server");
                 }
             }
+        });
+    }*/
+
+    public void getScore(){
+        gsm.socket.emit("getTopTen", new ArrayList<>(), new Ack() {
+            @Override
+            public void call(Object... args) {
+                JSONArray data = (JSONArray) args[0];
+                System.out.println("Its in get score");
+                try{
+                    convertJson(data);
+                    System.out.println("It got the Data");
+                    System.out.println("status"); // "ok"
+                    loaded = true;
+
+
+                } catch (Exception e){
+                    System.out.println("Something went wrong reading from Server");
+                }
+            }
+
         });
     }
 
@@ -151,7 +176,6 @@ public class ScoreState extends State{
                 scores.add(tempHash);
             }
             scoreResult = scores;
-            loaded = true;
         }
         catch(JSONException e){
             System.out.println("Error getting JSONs");
