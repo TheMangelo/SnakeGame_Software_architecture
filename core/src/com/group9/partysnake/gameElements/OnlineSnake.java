@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /*
@@ -64,17 +65,21 @@ public class OnlineSnake {
     {"p2": [1,2],[3,5],[6,100]}
     Where "p2" is the key in the larger JSON-object, which contains relevant position data
      */
-    public void castJSON(JSONObject jsonObject) throws JSONException {
-        JSONArray positions = (JSONArray) jsonObject.get("p2");
-        ArrayList posArray = new ArrayList();
+    public void castJSON(JSONObject jsonObject, String player) throws JSONException {
+        JSONArray positions = jsonObject.getJSONArray(player);
+        List<List<Integer>> posArray = new ArrayList<>();
 
-        int len = positions.length();
+        for (int i = 0; i < positions.length(); i++) {
+            List<Integer> temp = new ArrayList<>();
 
-        for (int i=0;i<len;i++){
-            posArray.add((ArrayList<Integer>)positions.get(i));
+            JSONArray insideList = positions.getJSONArray(i);
+            temp.add(insideList.getInt(0));
+            temp.add(insideList.getInt(1));
+
+            posArray.add(temp);
         }
+
         this.allPositions = posArray;
         this.headPosition = allPositions.get(0);
-
     }
 }
