@@ -24,8 +24,8 @@ public class PartySnake extends Game {
 	public void create () {
 		spriteBatch = new SpriteBatch();
 		gameStateManager = new GameStateManager();
-//		gameStateManager.push(new MenuState(gameStateManager));
-		gameStateManager.push(new ScoreState(gameStateManager));
+		gameStateManager.push(new MenuState(gameStateManager));
+//		gameStateManager.push(new ScoreState(gameStateManager));
 
 
 	}

@@ -20,6 +20,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import io.socket.emitter.Emitter;
+
 public class ScoreState extends State{
     private Stage stage;
     private Button backButton;
@@ -43,19 +45,34 @@ public class ScoreState extends State{
         font = new BitmapFont();
         font.getData().setScale(2f,2f);
 
-        jsonFromServer testJson = new jsonFromServer();
-
-        try{
-            convertJson(testJson.getTestJsonScore());
-        }  catch (JSONException e) {
-            e.printStackTrace();
-        }
+//        //LINE TO TEST JSON-HANDLING IN SCORESTATE
+//        jsonFromServer testJson = new jsonFromServer();
+//        try{
+//            convertJson(testJson.getTestJsonScore());
+//        }  catch (JSONException e) {
+//            e.printStackTrace();
+//        }
+//        //omitable
 
         makeButton();
         clickHandling();
 
         Gdx.input.setInputProcessor(stage);
         stage.addActor(backButton);
+    }
+
+    public void configSocketEvent(){
+        gsm.socket.on("getTopTen", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONArray data = (JSONArray) args[0];
+                try{
+                    convertJson(data);
+                } catch (Exception e){
+                    System.out.println("Something went wrong reading from Server");
+                }
+            }
+        });
     }
 
 
@@ -95,16 +112,12 @@ public class ScoreState extends State{
         sb.draw(scoreTexture, 470, 250, 70, 20);
 
         if(!loaded){
-            //font.draw(sb,"Loading...", 240,30);
-
-
+            font.draw(sb,"Loading...", 240,200);
 
         }
         else if (loaded){
             int startYpos = 230;
-
             for(int i = 0; i < scoreResult.size(); i++){
-
                 HashMap<String,String> tempHash = scoreResult.get(i);
                 String tempPlayer = tempHash.get("player");
                 String tempScore = tempHash.get("score");
@@ -113,12 +126,7 @@ public class ScoreState extends State{
                 font.draw(sb,tempScore, 470,startYpos);
                 startYpos -= 40;
             }
-
         }
-
-
-
-
         sb.end();
         stage.draw();
     }
@@ -133,7 +141,6 @@ public class ScoreState extends State{
 
     public void convertJson(JSONArray fromServer) throws JSONException {
         ArrayList scores = new ArrayList();
-
 
         try {
             for (int i = 0; i < fromServer.length(); i++) {
