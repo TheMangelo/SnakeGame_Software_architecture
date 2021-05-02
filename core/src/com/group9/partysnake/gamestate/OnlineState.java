@@ -78,7 +78,8 @@ public class OnlineState extends State {
                 }
             }
         });
-        // Some form of timeout or ability to cancel should be implemented
+        // Some form of timeout or ability to cancel should be implemented.
+        // Also, not finding a partner has to be handled somehow.
         while (opponentName == "") { ; }
     }
 
