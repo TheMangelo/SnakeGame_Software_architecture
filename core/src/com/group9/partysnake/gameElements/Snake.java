@@ -7,6 +7,8 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -262,8 +264,20 @@ public class Snake {
         return snakeY;
     }
 
-    public List<List<Integer>> getAllPositions() {
-        return allPositions;
+    public JSONArray getAllPositions() {
+        JSONArray listOfLists = new JSONArray();
+
+        for (int i = 0; i < allPositions.size(); i++) {
+            List<Integer> subPos = allPositions.get(i);
+            JSONArray temp = new JSONArray();
+
+            temp.put(subPos.get(0));
+            temp.put(subPos.get(1));
+
+            listOfLists.put(temp);
+        }
+
+        return listOfLists;
     }
 
     public void dispose(){
