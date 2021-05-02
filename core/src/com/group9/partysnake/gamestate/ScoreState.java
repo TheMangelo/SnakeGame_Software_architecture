@@ -80,7 +80,7 @@ public class ScoreState extends State{
     }*/
 
     public void getScore(){
-        gsm.socket.emit("getTopTen", new ArrayList<>(), new Ack() {
+        gsm.socket.emit("getTopTen", new Ack() {
             @Override
             public void call(Object... args) {
                 JSONArray data = (JSONArray) args[0];
