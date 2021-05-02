@@ -15,25 +15,26 @@ import com.group9.partysnake.PartySnake;
 public class ScoreState extends State{
     private Stage stage;
     private Button backButton;
-    private Texture background;
-    private int score[];
-    private int names[];
+    private Texture background, highscore, name, score;
+    private String names[];
 
 
     public ScoreState(GameStateManager gsm) {
         super(gsm);
 
         stage = new Stage();
+        background = new Texture("background.png");
+        highscore = new Texture("highscore.png");
+        name = new Texture ("name.png");
+        score = new Texture ("score.png");
 
         makeButton();
-
         clickHandling();
 
         Gdx.input.setInputProcessor(stage);
         stage.addActor(backButton);
-
-        background = new Texture("background.png");
     }
+
 
     private void makeButton() {
         TextureRegion backArrow = new TextureRegion(new Texture("return_arrow.png"));
@@ -56,8 +57,6 @@ public class ScoreState extends State{
     }
 
 
-
-
     @Override
     public void handleInput() {
 
@@ -72,12 +71,18 @@ public class ScoreState extends State{
     public void render(SpriteBatch sb) {
         sb.begin();
         sb.draw(background, 0, 0);
+        sb.draw(highscore, 130, 280, 400, 70);
+        sb.draw(name, 240, 230, 70, 20);
+        sb.draw(score, 470, 230, 70, 20);
         sb.end();
         stage.draw();
     }
 
     @Override
     public void dispose() {
-
+        background.dispose();
+        highscore.dispose();
+        name.dispose();
+        score.dispose();
     }
 }
