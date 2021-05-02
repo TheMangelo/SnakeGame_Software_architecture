@@ -57,6 +57,10 @@ public class LoginState extends State {
         Gdx.input.setInputProcessor(stage);
         stage.addActor(table);
         stage.addActor(backButton);
+
+        if (gsm.socket != null && gsm.socket.connected()) {
+            onConnect.call();
+        }
     }
 
     private void setUpTextFields() {
@@ -135,10 +139,18 @@ public class LoginState extends State {
         }
     }
 
-    @Override
-    public void handleInput() {
-        // Handled by stage
-    }
+    private Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (aboutToPlay) {
+                setUpDialog("Create a new game, or join existing one", false);
+                dialog.show(stage);
+            } else {
+                // TODO: Comment this back in when ScoreState has been defined!
+                // gsm.push(new ScoreState(gsm));
+            }
+        }
+    };
 
     private void connect(boolean newUser) {
         URI uri = URI.create( String.format("http://%s:%d/", HOSTNAME, PORT) );
@@ -177,21 +189,16 @@ public class LoginState extends State {
                 dialog.show(stage);
             }
         });
-        gsm.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                if (aboutToPlay) {
-                    setUpDialog("Create a new game, or join existing one", false);
-                    dialog.show(stage);
-                } else {
-                    // TODO: Comment this back in when ScoreState has been defined!
-                    // gsm.push(new ScoreState(gsm));
-                }
-            }
-        });
+        gsm.socket.on(Socket.EVENT_CONNECT, onConnect);
         gsm.socket.connect();
     }
 
+    @Override
+    public void handleInput() {
+        // Handled by stage
+    }
+
+    @Override
     public void update(float dt) {
         stage.act(dt);
     }
