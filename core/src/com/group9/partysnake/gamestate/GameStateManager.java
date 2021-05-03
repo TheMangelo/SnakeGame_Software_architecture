@@ -5,7 +5,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Stack;
 
-import io.socket.client.IO;
 import io.socket.client.Socket;
 
 public class GameStateManager {
@@ -38,5 +37,4 @@ public class GameStateManager {
     public void render(SpriteBatch sb) {
         states.peek().render(sb);
     }
-
 }
