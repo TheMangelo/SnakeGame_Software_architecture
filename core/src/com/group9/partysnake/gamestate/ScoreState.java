@@ -47,15 +47,6 @@ public class ScoreState extends State{
         font = new BitmapFont();
         font.getData().setScale(2f,2f);
 
-//        //LINE TO TEST JSON-HANDLING IN SCORESTATE
-//        jsonFromServer testJson = new jsonFromServer();
-//        try{
-//            convertJson(testJson.getTestJsonScore());
-//        }  catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        //omitable
-
         makeButton();
         clickHandling();
 
