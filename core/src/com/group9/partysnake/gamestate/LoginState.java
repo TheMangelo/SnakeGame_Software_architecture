@@ -150,9 +150,8 @@ public class LoginState extends State {
                 setUpDialog("Create a new game, or join existing one", false);
                 dialog.show(stage);
             } else {
-                // TODO: Comment this back in when ScoreState has been defined!
                 gsm.socket.off();
-                // gsm.set(new ScoreState(gsm));
+                gsm.set(new ScoreState(gsm));
             }
         }
     };
