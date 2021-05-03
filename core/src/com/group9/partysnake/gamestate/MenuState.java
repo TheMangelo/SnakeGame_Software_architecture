@@ -55,7 +55,6 @@ public class MenuState extends State {
     private ShapeRenderer shapeRenderer;
 
 
-
     public MenuState(GameStateManager gsm) {
         super(gsm);
         title = new Texture("title.png");
@@ -67,7 +66,6 @@ public class MenuState extends State {
         Texture snakeHead = new Texture("snakehead.png");
 
 
-
         sTitle = new Sprite(snakeHead);
         sTitle.setPosition(10, 10);
 
@@ -77,40 +75,37 @@ public class MenuState extends State {
     }
 
 
-
-
     @Override
     public void handleInput() {
-        if(Gdx.input.justTouched()){
+        if (Gdx.input.justTouched()) {
             System.out.println("You just touched the screen");
 
             int x = Gdx.input.getX();
             int y = PartySnake.HEIGHT - Gdx.input.getY();
-            System.out.println(x);
-            System.out.println(y);
 
             if ( (0 < x && x < setting.getWidth()) &&
                     (GRID_CELL*2 < y && y < GRID_CELL*2 + setting.getHeight()) ) {
                 gsm.push(new SettingsState(gsm));
-            }
-            else if ( (width - online.getWidth() < x && x < width) &&
-                        (height - GRID_CELL*8 < y && y < height-GRID_CELL*8 + online.getHeight())) {
+            } else if ( (width - online.getWidth() < x && x < width) &&
+                    (height - GRID_CELL*8 < y && y < height-GRID_CELL*8 + online.getHeight()) ) {
                 gsm.push(new LoginState(gsm, true));
+            } else if ((0 < x && x > score.getWidth()) &&
+                    (GRID_CELL*2 < y && y < GRID_CELL*2 + score.getHeight())) {
+                gsm.push(new LoginState(gsm, false));
             }
         }
     }
-
 
     @Override
     public void update(float dt) {
         handleInput();
     }
 
-    private void drawGrid() {
+    private void drawGrid () {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (int x = 0; x < width; x += GRID_CELL) {
             for (int y = 0; y < height; y += GRID_CELL) {
-                shapeRenderer.rect(x,y, GRID_CELL, GRID_CELL);
+                shapeRenderer.rect(x, y, GRID_CELL, GRID_CELL);
             }
         }
         shapeRenderer.end();
@@ -122,14 +117,9 @@ public class MenuState extends State {
         clearScreen();
         draw(sb);
         //drawGrid();
-
-
-
-
-
     }
 
-    public void dispose(){
+    public void dispose() {
         title.dispose();
         setting.dispose();
         online.dispose();
@@ -137,19 +127,17 @@ public class MenuState extends State {
         score.dispose();
     }
 
-    public void draw(SpriteBatch sb){
-        sb.begin();
-        //TITLE
-        sb.draw(title, (width-title.getWidth())/2, height-title.getHeight());
+        public void draw(SpriteBatch sb) {
+            sb.begin();
+            //TITLE
+            sb.draw(title, (width - title.getWidth())/2, height - title.getHeight());
 
-        //Buttons
-        sb.draw(single, 0, height-GRID_CELL*8);
-        sb.draw(online, width-online.getWidth(), height-GRID_CELL*8);
-        sb.draw(setting, 0, GRID_CELL*2);
-        sb.draw(score, width-score.getWidth(), GRID_CELL*2);
+            //Buttons
+            sb.draw(single, 0, height - GRID_CELL*8);
+            sb.draw(online, width - online.getWidth(), height - GRID_CELL*8);
+            sb.draw(setting, 0, GRID_CELL*2);
+            sb.draw(score, width - score.getWidth(), GRID_CELL*2);
 
-
-
-        sb.end();
-    }
+            sb.end();
+        }
 }
