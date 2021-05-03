@@ -15,13 +15,7 @@ import org.json.JSONObject;
 
 import java.util.concurrent.TimeUnit;
 
-
-//Disse blir relevante når
-
-
-
 public class OnlineState extends State {
-
     private final float UPDATE_TIME = 0.1f;
     private float timer;
     private boolean game_over;
@@ -76,20 +70,20 @@ public class OnlineState extends State {
                 joining = false;
             }
         });
-        // Some form of timeout or ability to cancel should be implemented
+        // An ability to cancel should be implemented
         int timeout = 0;
         while (joining) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
-            } catch (Exception e) {
-                ;
+            } catch (InterruptedException e) {
+                System.out.println(e.toString());
             }
             timeout += 100;
             if (timeout >= 8000) {
                 game_over = true;
                 stopReason = "Timed out while searching for games";
                 break;
-            };
+            }
         }
         joining = true;
     }
@@ -107,14 +101,13 @@ public class OnlineState extends State {
                 }
             }
         });
-        // Some form of timeout or ability to cancel should be implemented.
-        // Also, not finding a partner has to be handled somehow.
+        // An ability to cancel should be implemented
         int timeout = 0;
         while (true) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
-            } catch (Exception e) {
-                ;
+            } catch (InterruptedException e) {
+                System.out.println(e.toString());
             }
             if (opponentName == null || !opponentName.equals("")) break;
             timeout += 100;
@@ -128,7 +121,7 @@ public class OnlineState extends State {
         if (opponentName.equals("null")) {
             stopReason = "No opponent found";
             game_over = true;
-        };
+        }
     }
 
     private void queryInput() {
