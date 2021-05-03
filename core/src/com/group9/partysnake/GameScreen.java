@@ -32,6 +32,7 @@ public class GameScreen extends ScreenAdapter {
     private static final int GRID_CELL = 32;
     private int snakeX, snakeY = 0;
     private int snakeXBeforeUpdate = 0, snakeYBeforeUpdate = 0;
+    private int score = 0;
 
     private static final int RIGHT = 0;
     private static final int LEFT = 1;
@@ -93,6 +94,7 @@ public class GameScreen extends ScreenAdapter {
             bodyPart.updateBodyPosition(snakeX, snakeY);
             bodyParts.insert(0,bodyPart);
             appleAvailable = false;
+            score += 10;
         } }
 
     private void updateBodyPartsPosition() {

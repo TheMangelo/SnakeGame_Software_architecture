@@ -28,7 +28,10 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class LoginState extends State {
+
+    //private final static String HOSTNAME = "35.228.7.69";
     private final static String HOSTNAME = "127.0.0.1";
+
     private final static int PORT = 3000;
     private final static Skin SKIN = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -41,7 +44,7 @@ public class LoginState extends State {
 
     private Dialog dialog;
 
-    LoginState(GameStateManager gsm) {
+    public LoginState(GameStateManager gsm) {
         super(gsm);
 
         setUpTextFields();
@@ -160,6 +163,14 @@ public class LoginState extends State {
         gsm.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
+
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        gsm.push(new ScoreState(gsm));
+                    }
+                });
+
                 System.out.println("Connected!");
             }
         });
