@@ -98,8 +98,7 @@ public class LoginState extends State {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 if (gsm.socket != null) gsm.socket.off();
-                gsm.pop();
-                dispose();
+                changeState("back", false);
             }
         });
     }
@@ -126,20 +125,15 @@ public class LoginState extends State {
             public void result(Object obj) {
                 if (obj == null) return;
                 gsm.socket.off();
-                if ((boolean) obj) {
-                    gsm.set(new OnlineState(gsm, false));
-                } else {
-                    gsm.set(new OnlineState(gsm, true));
-                }
-                dispose();
+                changeState("play", (boolean) obj);
             }
         };
         dialog.text(text);
         if (failed) {
             dialog.button("OK", null);
         } else {
-            dialog.button("New game", true);
-            dialog.button("Join", false);
+            dialog.button("New game", false);
+            dialog.button("Join", true);
         }
     }
 
@@ -151,7 +145,7 @@ public class LoginState extends State {
                 dialog.show(stage);
             } else {
                 gsm.socket.off();
-                gsm.set(new ScoreState(gsm));
+                changeState("score", false);
             }
         }
     };
@@ -195,6 +189,28 @@ public class LoginState extends State {
         });
         gsm.socket.once(Socket.EVENT_CONNECT, onConnect);
         gsm.socket.connect();
+    }
+
+    private void changeState(final String state, final boolean joining) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                switch (state) {
+                    case "score":
+                        gsm.set(new ScoreState(gsm));
+                        break;
+                    case "play":
+                        gsm.set(new OnlineState(gsm, joining));
+                        break;
+                    case "back":
+                        gsm.pop();
+                        break;
+                    default:
+                        throw new IllegalArgumentException(state + " is not a valid state");
+                }
+                dispose();
+            }
+        });
     }
 
     @Override
