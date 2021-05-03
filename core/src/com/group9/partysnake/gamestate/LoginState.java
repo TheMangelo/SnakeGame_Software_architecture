@@ -29,8 +29,7 @@ import io.socket.emitter.Emitter;
 
 public class LoginState extends State {
 
-    //private final static String HOSTNAME = "35.228.7.69";
-    private final static String HOSTNAME = "127.0.0.1";
+    private final static String HOSTNAME = "35.228.7.69";
 
     private final static int PORT = 3000;
     private final static Skin SKIN = new Skin(Gdx.files.internal("uiskin.json"));
