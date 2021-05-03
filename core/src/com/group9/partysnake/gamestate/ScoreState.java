@@ -63,21 +63,14 @@ public class ScoreState extends State{
         stage.addActor(backButton);
     }
 
-/*    public void configSocketEvent(){
+/*
 
-        gsm.socket.on("getTopTen", new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-                JSONArray data = (JSONArray) args[0];
-                try{
-                    convertJson(data);
-                    System.out.println("It got the Data");
-                } catch (Exception e){
-                    System.out.println("Something went wrong reading from Server");
-                }
-            }
-        });
-    }*/
+    [{"score":0,"password":"test","_id":"608ebf5f023ac504802d6aa7","player":"David"}]
+    class org.json.JSONArray
+    {"score":0,"password":"test","_id":"608ebf5f023ac504802d6aa7","player":"David"}
+    class org.json.JSONObject
+ */
+
 
     public void getScore(){
         gsm.socket.emit("getTopTen", new Ack() {
@@ -86,10 +79,21 @@ public class ScoreState extends State{
                 JSONArray data = (JSONArray) args[0];
                 System.out.println("Its in get score");
                 try{
-                    convertJson(data);
-                    System.out.println("It got the Data");
-                    System.out.println("status"); // "ok"
-                    loaded = true;
+
+                    System.out.println(data);
+                    System.out.println(data.getClass());
+
+                    System.out.println(data.get(0));
+                    System.out.println(data.get(0).getClass());
+
+                    JSONObject tempJson = (JSONObject) data.get(0);
+
+                    Integer number = (Integer) tempJson.get("score");
+                    String user = (String)  tempJson.get("player");
+                    System.out.println(user + " has this many points " +number);
+
+                  convertJson(data);
+                  loaded = true;
 
 
                 } catch (Exception e){
@@ -172,7 +176,7 @@ public class ScoreState extends State{
                 JSONObject tempObj = fromServer.getJSONObject(i);
                 HashMap<String, String> tempHash = new HashMap<String, String>();
                 tempHash.put("player", (String) tempObj.get("player"));
-                tempHash.put("score", (String) tempObj.get("score"));
+                tempHash.put("score", tempObj.get("score").toString());
                 scores.add(tempHash);
             }
             scoreResult = scores;
