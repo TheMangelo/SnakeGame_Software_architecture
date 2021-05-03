@@ -98,7 +98,7 @@ project(":core") {
         api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         implementation ('io.socket:socket.io-client:2.0.1')
-        
+
     }
 }
 
@@ -118,7 +118,9 @@ project(":html") {
         api "com.badlogicgames.gdx:gdx-box2d-gwt:$gdxVersion:sources"
         api "com.badlogicgames.ashley:ashley:$ashleyVersion:sources"
         api "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion:sources"
-        
+
+
+
     }
 }
 
@@ -135,6 +137,9 @@ project(":ios") {
         api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-ios"
         api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-ios"
         api "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-ios"
-        
+
+
+
+
     }
 }

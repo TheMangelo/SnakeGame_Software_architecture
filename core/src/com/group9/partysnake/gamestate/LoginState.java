@@ -28,11 +28,11 @@ import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
 public class LoginState extends State {
-
     private final static String HOSTNAME = "35.228.7.69";
-
     private final static int PORT = 3000;
     private final static Skin SKIN = new Skin(Gdx.files.internal("uiskin.json"));
+
+    private boolean aboutToPlay;
 
     private Stage stage;
     private Table table;
@@ -43,19 +43,24 @@ public class LoginState extends State {
 
     private Dialog dialog;
 
-    public LoginState(GameStateManager gsm) {
+    public LoginState(GameStateManager gsm, boolean aboutToPlay) {
         super(gsm);
+
+        this.aboutToPlay = aboutToPlay;
 
         setUpTextFields();
         setUpButtons();
         setUpTable();
-        setUpDialog("");
 
         stage = new Stage();
 
         Gdx.input.setInputProcessor(stage);
         stage.addActor(table);
         stage.addActor(backButton);
+
+        if (gsm.socket != null && gsm.socket.connected()) {
+            onConnect.call();
+        }
     }
 
     private void setUpTextFields() {
@@ -92,7 +97,8 @@ public class LoginState extends State {
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gsm.push(new MenuState(gsm));
+                if (gsm.socket != null) gsm.socket.off();
+                changeState("back", false);
             }
         });
     }
@@ -113,16 +119,36 @@ public class LoginState extends State {
         table.pad(10);
     }
 
-    private void setUpDialog(String text) {
-        dialog = new Dialog("Could not connect", SKIN, "dialog");
-        if (text.length() > 0) dialog.text(text);
-        dialog.button("OK");
+    private void setUpDialog(String text, boolean failed) {
+        String title = failed ? "Could not connect" : "Connected!";
+        dialog = new Dialog(title, SKIN, "dialog") {
+            public void result(Object obj) {
+                if (obj == null) return;
+                gsm.socket.off();
+                changeState("play", (boolean) obj);
+            }
+        };
+        dialog.text(text);
+        if (failed) {
+            dialog.button("OK", null);
+        } else {
+            dialog.button("New game", false);
+            dialog.button("Join", true);
+        }
     }
 
-    @Override
-    public void handleInput() {
-        // Handled by stage
-    }
+    private Emitter.Listener onConnect = new Emitter.Listener() {
+        @Override
+        public void call(Object... args) {
+            if (aboutToPlay) {
+                setUpDialog("Create a new game, or join existing one", false);
+                dialog.show(stage);
+            } else {
+                gsm.socket.off();
+                changeState("score", false);
+            }
+        }
+    };
 
     private void connect(boolean newUser) {
         URI uri = URI.create( String.format("http://%s:%d/", HOSTNAME, PORT) );
@@ -135,11 +161,12 @@ public class LoginState extends State {
         IO.Options options = IO.Options.builder().setAuth(auth).build();
 
         gsm.socket = IO.socket(uri, options);
-        gsm.socket.on(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
+        gsm.socket.once(Socket.EVENT_CONNECT_ERROR, new Emitter.Listener() {
             @Override
             public void call(Object... args) {
                 if (args[0] instanceof Exception) {
-                    setUpDialog(args[0].toString() + '\n' + ((Exception) args[0]).getCause());
+                    setUpDialog(args[0].toString() + '\n' + ((Exception) args[0]).getCause(),
+                                true);
                     dialog.show(stage);
                     gsm.socket.disconnect();
                     return;
@@ -151,31 +178,47 @@ public class LoginState extends State {
                     message = jsonObject.getString("message");
                     data = jsonObject.getString("data");
                 } catch (JSONException e) {
-                    setUpDialog("Unexpected response from server:\n" + jsonObject.toString());
+                    setUpDialog("Unexpected response from server:\n" + jsonObject.toString(),
+                                true);
                     dialog.show(stage);
                     return;
                 }
-                setUpDialog(message + '\n' + data);
+                setUpDialog(message + '\n' + data, true);
                 dialog.show(stage);
             }
         });
-        gsm.socket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
-            @Override
-            public void call(Object... args) {
-
-                Gdx.app.postRunnable(new Runnable() {
-                    @Override
-                    public void run() {
-                        gsm.push(new ScoreState(gsm));
-                    }
-                });
-
-                System.out.println("Connected!");
-            }
-        });
+        gsm.socket.once(Socket.EVENT_CONNECT, onConnect);
         gsm.socket.connect();
     }
 
+    private void changeState(final String state, final boolean joining) {
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                switch (state) {
+                    case "score":
+                        gsm.set(new ScoreState(gsm));
+                        break;
+                    case "play":
+                        gsm.set(new OnlineState(gsm, joining));
+                        break;
+                    case "back":
+                        gsm.pop();
+                        break;
+                    default:
+                        throw new IllegalArgumentException(state + " is not a valid state");
+                }
+                dispose();
+            }
+        });
+    }
+
+    @Override
+    public void handleInput() {
+        // Handled by stage
+    }
+
+    @Override
     public void update(float dt) {
         stage.act(dt);
     }

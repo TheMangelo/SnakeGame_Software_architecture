@@ -17,7 +17,7 @@ import com.group9.partysnake.gameElements.Snake;
 import java.awt.Color;
 
 //This class is rendered by the Gamescreen
-public class SinglePlayerState extends ScreenAdapter {
+public class SinglePlayerState  {
 
 
     private Snake snakeInstance;
@@ -58,7 +58,6 @@ public class SinglePlayerState extends ScreenAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
-    @Override
     public void show () {
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
@@ -71,14 +70,16 @@ public class SinglePlayerState extends ScreenAdapter {
         boolean rPressed = Gdx.input.isKeyPressed(Input.Keys.RIGHT);
         boolean uPressed = Gdx.input.isKeyPressed(Input.Keys.UP);
         boolean dPressed = Gdx.input.isKeyPressed(Input.Keys.DOWN);
-        if (lPressed) snakeInstance.setSnakeDirection(LEFT);
+        if (lPressed) {
+            snakeInstance.setSnakeDirection(LEFT);
+            System.out.println("HIEIHEIHE");
+        }
         if (rPressed) snakeInstance.setSnakeDirection(RIGHT);
         if (uPressed) snakeInstance.setSnakeDirection(UP);
         if (dPressed) snakeInstance.setSnakeDirection(DOWN);
     }
 
 
-    @Override
     public void render(float delta) {
         timer -= delta;
         if (timer <= 0) {
