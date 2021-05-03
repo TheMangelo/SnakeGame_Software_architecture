@@ -1,34 +1,21 @@
 package com.group9.partysnake.gamestate;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.group9.partysnake.PartySnake;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
 public class MenuState extends State {
     private Texture title, setting, online, single, score;
-
-    public Sprite sTitle, sSetting, sOnline, sSingle, sScore;
-
-    private Button btnMenuPlay;
-    private Button btnMenuOptions;
 
     private static final int GRID_CELL = 32;
 
     private int btn_height = 4 * GRID_CELL;
     private int btn_width = 6 * GRID_CELL;
 
-
     private int height = PartySnake.HEIGHT;
     private int width = PartySnake.WIDTH;
-
-    private OrthographicCamera camera;
-    private ShapeRenderer shapeRenderer;
-
 
     public MenuState(GameStateManager gsm) {
         super(gsm);
@@ -37,16 +24,6 @@ public class MenuState extends State {
         online = new Texture("online.png");
         single = new Texture("single.png");
         score = new Texture("score.png");
-
-        Texture snakeHead = new Texture("snakehead.png");
-
-
-        sTitle = new Sprite(snakeHead);
-        sTitle.setPosition(10, 10);
-
-        shapeRenderer = new ShapeRenderer();
-        camera = new OrthographicCamera(PartySnake.HEIGHT, PartySnake.WIDTH);
-
     }
 
 
@@ -60,11 +37,15 @@ public class MenuState extends State {
                     (GRID_CELL*2 < y && y < GRID_CELL*2 + setting.getHeight()) ) {
                 gsm.push(new SettingsState(gsm));
             } else if ( (width - online.getWidth() < x && x < width) &&
-                    (height - GRID_CELL*8 < y && y < height-GRID_CELL*8 + online.getHeight()) ) {
+                    (height - GRID_CELL*8 < y && y < height - GRID_CELL*8 + online.getHeight()) ) {
                 gsm.push(new LoginState(gsm, true));
             } else if ( (0 < x && x > score.getWidth()) &&
                     (GRID_CELL*2 < y && y < GRID_CELL*2 + score.getHeight()) ) {
                 gsm.push(new LoginState(gsm, false));
+            } else if ( (0 < x && x < single.getWidth()) &&
+                    (height - GRID_CELL*8 < y && y < height - GRID_CELL*8 + single.getHeight()) ) {
+                // TODO: SinglePlayerState should be pushed here when it is available
+                // gsm.push(new SinglePlayerState());
             }
         }
     }
@@ -75,6 +56,7 @@ public class MenuState extends State {
     }
 
     private void drawGrid () {
+        ShapeRenderer shapeRenderer = new ShapeRenderer();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         for (int x = 0; x < width; x += GRID_CELL) {
             for (int y = 0; y < height; y += GRID_CELL) {
@@ -103,7 +85,7 @@ public class MenuState extends State {
         public void draw(SpriteBatch sb) {
             sb.begin();
             //TITLE
-            sb.draw(title, (width - title.getWidth())/2, height - title.getHeight());
+            sb.draw(title, (float) (width - title.getWidth())/2, height - title.getHeight());
 
             //Buttons
             sb.draw(single, 0, height - GRID_CELL*8);
