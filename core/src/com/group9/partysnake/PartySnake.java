@@ -5,13 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.group9.partysnake.gamestate.GameStateManager;
-import com.group9.partysnake.gamestate.LoginState;
 import com.group9.partysnake.gamestate.MenuState;
-import com.group9.partysnake.gamestate.ScoreState;
-import com.group9.partysnake.gamestate.SinglePlayerState;
 
 public class PartySnake extends Game {
-
 	public static final int WIDTH = 640;
 	public static final int HEIGHT = 360 ;
 
@@ -25,11 +21,7 @@ public class PartySnake extends Game {
 	public void create () {
 		spriteBatch = new SpriteBatch();
 		gameStateManager = new GameStateManager();
-		//gameStateManager.push(new MenuState(gameStateManager));
-		//gameStateManager.push(new ScoreState(gameStateManager));
-		gameStateManager.push(new LoginState(gameStateManager));
-
-
+		gameStateManager.push(new MenuState(gameStateManager));
 	}
 
 	@Override
@@ -38,5 +30,4 @@ public class PartySnake extends Game {
 		gameStateManager.update(Gdx.graphics.getDeltaTime());
 		gameStateManager.render(spriteBatch);
 	}
-
 }
