@@ -170,19 +170,34 @@ public class ScoreState extends State{
 
     public void convertJson(JSONArray fromServer) throws JSONException {
         ArrayList scores = new ArrayList();
-
-        try {
-            for (int i = 0; i < fromServer.length(); i++) {
-                JSONObject tempObj = fromServer.getJSONObject(i);
-                HashMap<String, String> tempHash = new HashMap<String, String>();
-                tempHash.put("player", (String) tempObj.get("player"));
-                tempHash.put("score", tempObj.get("score").toString());
-                scores.add(tempHash);
+        if( fromServer.length() > 5){
+            try {
+                for (int i = 0; i < 5; i++) {
+                    JSONObject tempObj = fromServer.getJSONObject(i);
+                    HashMap<String, String> tempHash = new HashMap<String, String>();
+                    tempHash.put("player", (String) tempObj.get("player"));
+                    tempHash.put("score", tempObj.get("score").toString());
+                    scores.add(tempHash);
+                }
+                scoreResult = scores;
             }
-            scoreResult = scores;
-        }
-        catch(JSONException e){
-            System.out.println("Error getting JSONs");
+            catch(JSONException e){
+                System.out.println("Error getting JSONs");
+            }
+        } else {
+            try {
+                for (int i = 0; i < fromServer.length(); i++) {
+                    JSONObject tempObj = fromServer.getJSONObject(i);
+                    HashMap<String, String> tempHash = new HashMap<String, String>();
+                    tempHash.put("player", (String) tempObj.get("player"));
+                    tempHash.put("score", tempObj.get("score").toString());
+                    scores.add(tempHash);
+                }
+                scoreResult = scores;
+            }
+            catch(JSONException e){
+                System.out.println("Error getting JSONs");
+            }
         }
     }
 }
