@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class OnlineState extends State {
 
-    private final float UPDATE_TIME = 1/30f;
+    private final float UPDATE_TIME = 0.1f;
     private float timer;
     private boolean game_over;
     private String stopReason;
@@ -63,6 +63,12 @@ public class OnlineState extends State {
             @Override
             public void call(Object... args) {
                 opponentName = (String) args[0];
+                if (opponentName.equals("null")) {
+                    game_over = true;
+                    stopReason = "No games available";
+                    joining = false;
+                    return;
+                }
                 // Responding with true accepts the invite.
                 // User should probably be asked if they want to accept, but for now
                 // the response is always true (accept).
@@ -71,7 +77,20 @@ public class OnlineState extends State {
             }
         });
         // Some form of timeout or ability to cancel should be implemented
-        while (joining) { ; }
+        int timeout = 0;
+        while (joining) {
+            try {
+                TimeUnit.MILLISECONDS.sleep(100);
+            } catch (Exception e) {
+                ;
+            }
+            timeout += 100;
+            if (timeout >= 8000) {
+                game_over = true;
+                stopReason = "Timed out while searching for games";
+                break;
+            };
+        }
         joining = true;
     }
 
@@ -90,6 +109,7 @@ public class OnlineState extends State {
         });
         // Some form of timeout or ability to cancel should be implemented.
         // Also, not finding a partner has to be handled somehow.
+        int timeout = 0;
         while (true) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
@@ -97,6 +117,13 @@ public class OnlineState extends State {
                 ;
             }
             if (opponentName == null || !opponentName.equals("")) break;
+            timeout += 100;
+            if (timeout >= 8000) {
+                opponentName = " ";
+                stopReason = "Timed out while searching for opponent";
+                game_over = true;
+                break;
+            }
         }
         if (opponentName.equals("null")) {
             stopReason = "No opponent found";
@@ -145,6 +172,7 @@ public class OnlineState extends State {
                     {"p1": "[[1,2], [3,2], ,,,]",
                     "p2":  "[3,6], [6,7], [2,4],,,,"}
                    * */
+                    System.out.println("Received: " + board);
                     onlineSnake.castJSON(board, joining ? "p1" : "p2");
                 }catch(JSONException e){
                     Gdx.app.log("SocketIO", "Error updating game with gameUpdate");
@@ -166,8 +194,7 @@ public class OnlineState extends State {
 
     //This updates the server and sends data to the server
     public void updateServer(float dt) {
-        timer += dt;
-        if (timer >= UPDATE_TIME && mySnake != null && !game_over) {
+        if (mySnake != null && !game_over) {
             JSONObject data = new JSONObject();
             JSONObject positionJson = new JSONObject();
 
@@ -175,7 +202,8 @@ public class OnlineState extends State {
                 String playerNumber = joining ? "p2" : "p1";
                 positionJson.put(playerNumber, mySnake.getAllPositions());
                 data.put("board", positionJson);
-                data.put("time", timer);
+                data.put("time", System.currentTimeMillis());
+                System.out.println("Sending to " + playerNumber + ": " + data);
                 gsm.socket.emit("tick", data);
 
             } catch (JSONException e){
@@ -198,10 +226,15 @@ public class OnlineState extends State {
     public void update(float dt) {
         if (game_over) {
             onGameOver.call();
+            return;
         }
-        updateServer(dt);
-        mySnake.updateSnake();
-
+        timer -= dt;
+        if (timer <= 0) {
+            handleInput();
+            mySnake.updateSnake();
+            updateServer(dt);
+            timer = UPDATE_TIME;
+        }
     }
 
     @Override
