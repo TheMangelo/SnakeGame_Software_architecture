@@ -79,7 +79,8 @@ public class OnlineSnake {
             posArray.add(temp);
         }
 
-        this.allPositions = posArray;
-        this.headPosition = allPositions.get(0);
+        allPositions = posArray;
+        headPosition = allPositions.get(0);
+        System.out.println("Interpreted: " + allPositions);
     }
 }
