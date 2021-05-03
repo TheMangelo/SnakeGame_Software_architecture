@@ -3,7 +3,6 @@ package com.group9.partysnake.gamestate;
 import io.socket.client.Ack;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
-import jdk.internal.module.SystemModuleFinders;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -84,32 +83,25 @@ public class OnlineState extends State {
                 JSONObject jsonObject = (JSONObject) args[0];
                 try {
                     opponentName = jsonObject.getString("opponent");
-                    System.out.println("received: " + opponentName);
                 } catch (JSONException e) {
-                    System.out.println("inside catch: " + e.toString());
                     opponentName = null;
                 }
             }
         });
         // Some form of timeout or ability to cancel should be implemented.
         // Also, not finding a partner has to be handled somehow.
-        System.out.println("pre-loop: " + opponentName);
         while (true) {
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
-                System.out.println("loop: " + (opponentName == null && !opponentName.equals("")));
             } catch (Exception e) {
                 ;
             }
             if (opponentName == null || !opponentName.equals("")) break;
         }
-        System.out.println("post-loop");
         if (opponentName.equals("null")) {
             stopReason = "No opponent found";
             game_over = true;
-            System.out.println("in loop");
         };
-        System.out.println("post-if");
     }
 
     private void queryInput() {
@@ -134,7 +126,6 @@ public class OnlineState extends State {
                 public void run() {
                     gsm.pop();
                     dispose();
-                    System.out.println(gsm.getStates());
                 }
             });
         }
@@ -149,7 +140,6 @@ public class OnlineState extends State {
             public void call(Object... args) {
                 //Must extract the relevant position_data
                 JSONObject board = (JSONObject) args[0];
-                System.out.println("RAW: " + board);
                 try {
                    /* NB! board needs to be on the form
                     {"p1": "[[1,2], [3,2], ,,,]",
@@ -176,18 +166,14 @@ public class OnlineState extends State {
 
     //This updates the server and sends data to the server
     public void updateServer(float dt) {
-        System.out.println("Updating server");
         timer += dt;
-        if (timer >= UPDATE_TIME && mySnake != null && !game_over){
-            System.out.println("Update started");
+        if (timer >= UPDATE_TIME && mySnake != null && !game_over) {
             JSONObject data = new JSONObject();
             JSONObject positionJson = new JSONObject();
 
             try{
                 String playerNumber = joining ? "p2" : "p1";
-                System.out.println("Playernum: " + playerNumber);
                 positionJson.put(playerNumber, mySnake.getAllPositions());
-                System.out.println(mySnake.getAllPositions());
                 data.put("board", positionJson);
                 data.put("time", timer);
                 gsm.socket.emit("tick", data);
