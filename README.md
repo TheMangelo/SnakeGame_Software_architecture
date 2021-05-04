@@ -53,4 +53,4 @@ Additionally, it may be interesting to know that all of the project's graphical 
 
 Lastly, to provide an overview of the logic, a class diagram is shown below.
 
-![Class diagram](./classDiagram.png)
+![Class diagram](./classDiagram.jpg)
