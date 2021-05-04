@@ -1,7 +1,10 @@
 # SA-prosjekt
 This is the frontend of the Party Snake Android game. It is created in the context of the group project of TDT4240 Software Architecture.
 
-## Notes on Compilation
+## State of the Project
+Because of several reasons, the project was by no means completed. Several pieces of functionality are still missing, and multiple bugs persist. Currently, the master branch contains a somewhat functioning game based on the code that was completed till now.
+
+## Compilation
 As this is a Java project with Gradle, you should be able to easily compile and run the project by cloning the repo and compiling the project locally. By using Android Studio, you can clone the project and run the game with the desktop launcher. Note that though it is possible to run the project on Android or the Android emulator, it is not recommended to run the game this way as the results are very buggy given the code's current state.
 
 ## Structure
