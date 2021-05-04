@@ -16,11 +16,10 @@ public class PartySnake extends Game {
 	private GameStateManager gameStateManager;
 	private SpriteBatch spriteBatch;
 
-
 	@Override
 	public void create () {
 		spriteBatch = new SpriteBatch();
-		gameStateManager = new GameStateManager();
+		gameStateManager = GameStateManager.getInstance();
 		gameStateManager.push(new MenuState(gameStateManager));
 	}
 
