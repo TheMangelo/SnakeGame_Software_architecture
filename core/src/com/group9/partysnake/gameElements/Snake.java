@@ -23,13 +23,11 @@ public class Snake {
     private Texture snakeHead = new Texture("snakehead.png");
     private Texture super_snakeBody = new Texture("snakebody.png");
 
-
     private Array<BodyPart> bodyParts = new Array<BodyPart>();
 
     private List<List<Integer>> allPositions =new ArrayList<List<Integer>>();
 
     private Rectangle rectangle = new Rectangle(0,0, snakeHead.getWidth(),snakeHead.getHeight());
-
 
     // For handling the direction changes
     private static final int RIGHT = 0;
@@ -38,7 +36,6 @@ public class Snake {
     private static final int DOWN = 3;
 
     //Initial movement
-
     private int snakeDirection = RIGHT;
 
     //For stoppping doublebacks
@@ -66,8 +63,8 @@ public class Snake {
             this.y = y;
 
             //Have to update the list of position related to bodies.
-            allPositions.get(getPositionIndex()).set(0,x);
-            allPositions.get(getPositionIndex()).set(1,y);
+            allPositions.get(getPositionIndex() - 1).set(0,x);
+            allPositions.get(getPositionIndex() - 1).set(1,y);
 
 
         }
@@ -102,6 +99,9 @@ public class Snake {
         rectangle.set(positionX,positionY,snakeHead.getWidth(),snakeHead.getHeight());
     }
 
+    public boolean isHasHit() {
+        return hasHit;
+    }
 
     public void updateAllPosition( List<List<Integer>> sentPosition){
         this.allPositions = sentPosition;
