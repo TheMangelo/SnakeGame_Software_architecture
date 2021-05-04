@@ -7,14 +7,23 @@ import java.util.Stack;
 
 import io.socket.client.Socket;
 
+/**
+ * Implementation of a game state manager that utilises the singleton pattern
+ */
 public class GameStateManager {
+    private static final GameStateManager INSTANCE = new GameStateManager();
+
     private Stack<State> states;
 
     // "Global variable"
     public Socket socket;
 
-    public GameStateManager() {
+    private GameStateManager() {
         states = new Stack<>();
+    }
+
+    public static GameStateManager getInstance() {
+        return INSTANCE;
     }
 
     public void push(State state) {
