@@ -1,4 +1,4 @@
-# SA-prosjekt
+# SA Project
 This is the frontend of the Party Snake Android game. It is created in the context of the group project of TDT4240 Software Architecture.
 
 ## State of the Project
