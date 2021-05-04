@@ -15,8 +15,10 @@ public class GameStateManager {
 
     private Stack<State> states;
 
-    // "Global variable"
+    // "Global variables" that are used by multiple different game states
     public Socket socket;
+    public String[] snakeSkin = {"snakehead.png", "snakebody.png"};
+    public String background = "grass_back.png";
 
     private GameStateManager() {
         states = new Stack<>();

@@ -14,20 +14,20 @@ import java.util.List;
 
 public class Snake {
 
-    private int snakeX = 0, snakeY = 0;
+    private int snakeX, snakeY;
     private boolean hasHit = false;
 
     private Vector2 formerPosition = new Vector2(0,0);
 
     private int SNAKE_MOVEMENT = 32;
-    private Texture snakeHead = new Texture("snakehead.png");
-    private Texture super_snakeBody = new Texture("snakebody.png");
+    private Texture snakeHead;
+    private Texture super_snakeBody;
 
-    private Array<BodyPart> bodyParts = new Array<BodyPart>();
+    private Array<BodyPart> bodyParts = new Array<>();
 
-    private List<List<Integer>> allPositions =new ArrayList<List<Integer>>();
+    private List<List<Integer>> allPositions =new ArrayList<>();
 
-    private Rectangle rectangle = new Rectangle(0,0, snakeHead.getWidth(),snakeHead.getHeight());
+    private Rectangle rectangle;
 
     // For handling the direction changes
     private static final int RIGHT = 0;
@@ -45,8 +45,6 @@ public class Snake {
 
         private int x, y;
         protected int positionIndex;
-
-        private Texture texture = new Texture("snakebody.png");
 
         //Uses the length of allPositions to determine its index position
         public BodyPart() {
@@ -70,22 +68,24 @@ public class Snake {
         }
 
         public void draw(Batch batch) {
-            if (!(x == (int)snakeX && y == (int)snakeY)) batch.draw(texture, x, y);
+            if (!(x == snakeX && y == snakeY)) batch.draw(super_snakeBody, x, y);
         }
 
         public void dispose(){
-            texture.dispose();
+            super_snakeBody.dispose();
         }
     }
 
-    public Snake(){
-        System.out.print("it's alive!!");
-        this.snakeX = 0;
-        this.snakeY = 0;
+    public Snake(String headSkinPath, String bodySkinPath) {
+        snakeX = 0;
+        snakeY = 0;
 
-        rectangle.set(0,0,snakeHead.getWidth(),snakeHead.getHeight());
+        snakeHead = new Texture(headSkinPath);
+        super_snakeBody = new Texture(bodySkinPath);
+
+        rectangle = new Rectangle(0,0, snakeHead.getWidth(),snakeHead.getHeight());
         //This head will be its first position sent to the socket
-        List<Integer> headPosition = new ArrayList<Integer>();
+        List<Integer> headPosition = new ArrayList<>();
         headPosition.add(snakeX);
         headPosition.add(snakeY);
         allPositions.add(headPosition);
@@ -93,10 +93,12 @@ public class Snake {
 
     public Snake(Texture snakeHead, Texture snakeBody, int positionX, int positionY){
         this.snakeHead = snakeHead;
-        this.super_snakeBody = snakeBody;
-        this.snakeX = positionX;
-        this.snakeY = positionY;
-        rectangle.set(positionX,positionY,snakeHead.getWidth(),snakeHead.getHeight());
+        super_snakeBody = snakeBody;
+        snakeX = positionX;
+        snakeY = positionY;
+        rectangle = new Rectangle(
+                positionX, positionY, snakeHead.getWidth(), snakeHead.getHeight()
+        );
     }
 
     public boolean isHasHit() {
@@ -108,14 +110,14 @@ public class Snake {
     }
 
 
-    public void increaseLength(){
+    public void increaseLength() {
         BodyPart bodyPart = new BodyPart();
-        bodyPart.updateBodyPosition((int)snakeX,(int)snakeY);
+        bodyPart.updateBodyPosition(snakeX, snakeY);
         bodyParts.insert(0,bodyPart);
     }
 
 
-    public void checkSnakeEat(SuperEatable eatable){
+    public void checkSnakeEat(SuperEatable eatable) {
         if (eatable.isAvailable &&
                 eatable.position.x == snakeX && eatable.position.y == snakeY)
         {
@@ -150,7 +152,10 @@ public class Snake {
 
     private void checkSnakeBodyCollision() {
         for (BodyPart bodyPart : bodyParts) {
-            if (bodyPart.x == snakeX && bodyPart.y == snakeY) hasHit = true;
+            if (bodyPart.x == snakeX && bodyPart.y == snakeY) {
+                hasHit = true;
+                break;
+            }
         }
     }
 
@@ -200,22 +205,21 @@ public class Snake {
         switch(snakeDirection){
             case RIGHT: {
                snakeX += SNAKE_MOVEMENT;
-                return;
+                break;
             }
             case LEFT: {
                snakeX -= SNAKE_MOVEMENT;
-                return;
+                break;
             }
             case UP: {
                snakeY+= SNAKE_MOVEMENT;
-                return;
+                break;
             }
             case DOWN: {
                snakeY-= SNAKE_MOVEMENT;
-                return;
+                break;
             }
         }
-
     }
 
     public void updateBodyPartsPosition() {

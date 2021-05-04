@@ -21,6 +21,12 @@ public class SettingsState extends State {
                    backgroundButtonLeft, backgroundButtonRight,
                    backButton;
 
+    private String[] skinPaths = {"snakehead.png", "yellow_snake.png", "snakehead_purp.png"};
+    private String[] bodySkinPaths = {
+            "snakebody.png","yellow_snake_body.png", "snakebody_purp.png"
+    };
+    private String[] backgroundPaths = {"grass_back.png", "bck_2.png"};
+
     private Array<Image> skins, backgrounds;
     private Image currentSkin, currentBackground;
     private int skinIndex, backgroundIndex;
@@ -66,11 +72,9 @@ public class SettingsState extends State {
         skins = new Array<>();
         backgrounds = new Array<>();
 
-        String[] skinPaths = {"snakehead.png", "yellow_snake.png", "snakehead_purp.png"};
         for (String path : skinPaths) {
             skins.add(new Image(new Texture(path)));
         }
-        String[] backgroundPaths = {"grass_back.png", "bck_2.png"};
         for (String path : backgroundPaths) {
             backgrounds.add(new Image(new Texture(path)));
         }
@@ -90,7 +94,6 @@ public class SettingsState extends State {
             public void changed(ChangeEvent event, Actor actor) {
                 skinIndex = skinIndex == 0 ? skins.size - 1 : skinIndex - 1;
                 currentSkin.setDrawable(skins.get(skinIndex).getDrawable());
-                System.out.println(skinIndex);
             }
         });
         skinButtonRight.addListener(new ChangeListener() {
@@ -98,7 +101,6 @@ public class SettingsState extends State {
             public void changed(ChangeEvent event, Actor actor) {
                 skinIndex = skinIndex == skins.size - 1 ? 0 : skinIndex + 1;
                 currentSkin.setDrawable(skins.get(skinIndex).getDrawable());
-                System.out.println(skinIndex);
             }
         });
         backgroundButtonLeft.addListener(new ChangeListener() {
@@ -106,7 +108,6 @@ public class SettingsState extends State {
             public void changed(ChangeEvent event, Actor actor) {
                 backgroundIndex = backgroundIndex == 0 ? backgrounds.size - 1 : backgroundIndex - 1;
                 currentBackground.setDrawable(backgrounds.get(backgroundIndex).getDrawable());
-                System.out.println(backgroundIndex);
             }
         });
         backgroundButtonRight.addListener(new ChangeListener() {
@@ -114,13 +115,16 @@ public class SettingsState extends State {
             public void changed(ChangeEvent event, Actor actor) {
                 backgroundIndex = backgroundIndex == backgrounds.size - 1 ? 0 : backgroundIndex + 1;
                 currentBackground.setDrawable(backgrounds.get(backgroundIndex).getDrawable());
-                System.out.println(backgroundIndex);
             }
         });
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                gsm.push(new MenuState(gsm));
+                gsm.snakeSkin[0] = skinPaths[skinIndex];
+                gsm.snakeSkin[1] = bodySkinPaths[skinIndex];
+                gsm.background = backgroundPaths[backgroundIndex];
+                gsm.pop();
+                dispose();
             }
         });
     }

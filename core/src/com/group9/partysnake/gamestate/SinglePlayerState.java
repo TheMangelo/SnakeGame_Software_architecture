@@ -2,8 +2,10 @@ package com.group9.partysnake.gamestate;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.group9.partysnake.PartySnake;
 import com.group9.partysnake.gameElements.Apple;
 import com.group9.partysnake.gameElements.Snake;
 
@@ -12,8 +14,7 @@ public class SinglePlayerState extends State {
     private Apple apple;
     private ShapeRenderer shapeRenderer;
 
-    private boolean directionSet = false;
-    private boolean hasHit = false;
+    private Texture background;
 
     private static final int RIGHT = 0;
     private static final int LEFT = 1;
@@ -27,6 +28,7 @@ public class SinglePlayerState extends State {
 
     public SinglePlayerState(GameStateManager gsm) {
         super(gsm);
+        background = new Texture(gsm.background);
         show();
     }
 
@@ -42,7 +44,7 @@ public class SinglePlayerState extends State {
 
     public void show () {
         shapeRenderer = new ShapeRenderer();
-        snakeInstance = new Snake();
+        snakeInstance = new Snake(gsm.snakeSkin[0], gsm.snakeSkin[1]);
         apple = new Apple();
     }
 
@@ -77,13 +79,14 @@ public class SinglePlayerState extends State {
 
     @Override
     public void render(SpriteBatch sb) {
-        clearScreen(); //<----- Denne må være før hahah hvis ikke så clearer den før den tegner hver gang
-        drawGrid();
+        clearScreen();
+        // drawGrid();
         draw(sb);
     }
 
     public void draw(SpriteBatch batch){
         batch.begin();
+        batch.draw(background, 0, 0, PartySnake.WIDTH, PartySnake.HEIGHT);
         snakeInstance.draw(batch);
         apple.draw(batch);
         batch.end();

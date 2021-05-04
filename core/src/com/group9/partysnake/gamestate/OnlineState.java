@@ -6,7 +6,9 @@ import io.socket.emitter.Emitter;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.group9.partysnake.PartySnake;
 import com.group9.partysnake.gameElements.OnlineSnake;
 import com.group9.partysnake.gameElements.Snake;
 
@@ -16,11 +18,11 @@ import org.json.JSONObject;
 import java.util.concurrent.TimeUnit;
 
 public class OnlineState extends State {
-    private final float UPDATE_TIME = 0.1f;
+    private final static float UPDATE_TIME = 0.1f;
+
     private float timer;
-    private boolean game_over;
-    private String stopReason;
-    private boolean joining;
+    private boolean game_over, joining;
+    private String stopReason, opponentName;
 
     // For handling the direction changes
     private static final int RIGHT = 0;
@@ -31,17 +33,16 @@ public class OnlineState extends State {
     private Snake mySnake;
     private OnlineSnake onlineSnake;
 
-    private String opponentName;
-
-    private static final float MOVE_TIME = 0.1F;  //Hvor fort slangen skal bevege seg og oppdatere movesa
+    private Texture background;
 
     public OnlineState(GameStateManager gsm, boolean joining) {
         super(gsm);
 
         game_over = false;
         this.joining = joining;
-        mySnake = new Snake();
+        mySnake = new Snake(gsm.snakeSkin[0], gsm.snakeSkin[1]);
         onlineSnake = new OnlineSnake();
+        background = new Texture(gsm.background);
 
         configSocketEvent();
 
@@ -206,6 +207,8 @@ public class OnlineState extends State {
     }
 
     public void draw(SpriteBatch sb){
+        clearScreen();
+        sb.draw(background, 0, 0, PartySnake.WIDTH, PartySnake.HEIGHT);
         if(mySnake != null){
             mySnake.draw(sb);
         }
