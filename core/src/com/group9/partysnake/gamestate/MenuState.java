@@ -44,8 +44,7 @@ public class MenuState extends State {
                 gsm.push(new LoginState(gsm, false));
             } else if ( (0 < x && x < single.getWidth()) &&
                     (height - GRID_CELL*8 < y && y < height - GRID_CELL*8 + single.getHeight()) ) {
-                // TODO: SinglePlayerState should be pushed here when it is available
-                // gsm.push(new SinglePlayerState());
+                gsm.push(new SinglePlayerState(gsm));
             }
         }
     }
